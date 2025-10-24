@@ -7,8 +7,8 @@ set -e  # Exit immediately on error
 # ========================
 PROJECT_NAME="signalut"
 DEB_URL="https://github.com/0mniteck/Signal-Desktop-Mobian/raw/refs/heads/7.68.x/builds/release/signal-desktop_7.68.0_arm64.deb"
-DEB_FILE="${BUILD_DIR}/signal-desktop.deb"
-EXTRACT_DIR="${BUILD_DIR}/deb_extracted"
+SNAP_FILE="${BUILD_DIR}/signal-desktop.snap"
+EXTRACT_DIR="${BUILD_DIR}/squashfs-root"
 INSTALL_DIR="${BUILD_DIR}/install"
 EXPECTED_HASH="7ee73ff2b6057ed279fe22d871b2dff28f53384f9da6f43e0dda9f2664e097be"
 
@@ -32,36 +32,31 @@ rm -r $INSTALL_DIR/lib/x86_64-linux-gnu
 cp -r ${ROOT}/immodules.cache "$INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/immodules.cache"
 
 # ========================
-# STEP 2: DOWNLOAD THE .DEB
+# STEP 2: DOWNLOAD THE LATEST SIGNAL DESKTOP SNAP USING SNAP
 # ========================
-echo "[3/6] Downloading Signal Desktop..."
-curl -L -o "$DEB_FILE" "$DEB_URL"
+echo "[3/6] Downloading latest Signal Desktop via snap..."
+mkdir -p "$EXTRACT_DIR"
 
-# Verify integrity
-echo "[*] Verifying SHA256 hash..."
-ACTUAL_HASH=$(sha256sum "$DEB_FILE" | awk '{print $1}')
-if [[ "$ACTUAL_HASH" != "$EXPECTED_HASH" ]]; then
-    echo "❌ Error: invalid hash."
-    echo "Expected: $EXPECTED_HASH"
-    echo "Actual  : $ACTUAL_HASH"
-    exit 1
-fi
 
+# Télécharge le snap sans l’installer globalement
+cd ${BUILD_DIR}
+DOWNLOAD_URL=$(curl -s https://api.snapcraft.io/v2/snaps/info/signal-desktop -H "Snap-Device-Series: 16" -H "Snap-Architecture: arm64" | jq -r '.["channel-map"][] 
+            | select(.channel.architecture=="arm64" and .channel.name=="stable") 
+            | .download.url'
+            )
+curl -L -o "$SNAP_FILE" "$DOWNLOAD_URL"
 # ========================
 # STEP 3: EXTRACTION
 # ========================
-echo "[4/6] Extracting .deb package..."
-cd "$EXTRACT_DIR"
-ar x "$DEB_FILE"
-tar xf data.tar.xz
-cd ..
+echo "[4/6] Extracting .snap package..."
+rm -r $EXTRACT_DIR
+unsquashfs "$SNAP_FILE"
 
 # ========================
 # STEP 4: INSTALL TO TEMP DIRECTORY
 # ========================
-echo "[5/6] Copying files to $INSTALL_DIR..."
-mkdir "$INSTALL_DIR/opt/"
-
+echo "[5/6] Copying Signal to $INSTALL_DIR/opt..."
+mkdir -p "$INSTALL_DIR/opt/"
 cp -r "$EXTRACT_DIR/opt/Signal" "$INSTALL_DIR/opt/" || true
 
 # Copy project files
@@ -74,7 +69,7 @@ cp ${ROOT}/signalut.apparmor "$INSTALL_DIR/"
 
 chmod +x $INSTALL_DIR/launcher.sh
 chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
-chmod +x $INSTALL_DIR/opt/Signal/chrome-sandbox
+#chmod +x $INSTALL_DIR/opt/Signal/chrome-sandbox
 chmod +x $INSTALL_DIR/opt/Signal/chrome_crashpad_handler
 
 # ========================

@@ -1,4 +1,4 @@
 clickable_minimum_required: 8.0.0
 builder: custom
 build: ${ROOT}/build.sh
-dependencies_host: ["qemu-user-static" , "tree" , "patchelf", "git"]
+dependencies_host: ["qemu-user-static" , "tree" , "patchelf", "git", "jq", "snapd"]
