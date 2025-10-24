@@ -1,0 +1,1 @@
+deb [signed-by=$HOME/.config/crackle/trusted.gpg.d/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main

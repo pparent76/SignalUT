@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+function install_vim (){
+	say "Setting up ${pkgname}";
+	VIMRUNTIME=/usr/share/vim/vim81;
+	echo "export VIMRUNTIME=$PKG_PATH/vim-runtime$VIMRUNTIME" > $CRACKLEENV/${pkgname};
+	[ ! -f $PKG_PREFIX/bin/vim ] && ln -s $PKG_PATH/vim/usr/bin/vim.basic $PKG_PREFIX/bin/vim;
+	mkdir -p $PKG_PATH/vim-runtime$VIMRUNTIME/plugin;
+	[ -f $VIMRUNTIME/debian.vim ] && cp $VIMRUNTIME/debian.vim $PKG_PATH/vim-runtime/usr/share/vim/vim81;
+	[ -f /usr/share/vim/vimrc ] && {
+	mkdir -p $PKG_PATH/vim-common/usr/share/vim;
+	cp /usr/share/vim/vimrc $PKG_PATH/vim-common/usr/share/vim/vimrc;
+	}
+	cp $PKG_PREFIX/lib/crackle/etc/tab2esc.vim $PKG_PATH/vim-runtime$VIMRUNTIME/plugin/;
+	sed -i "/runtime/ s|$|,${XDG_DATA_HOME:-$HOME/.local/share}/crackle/vim-runtime${VIMRUNTIME}|" ${XDG_DATA_HOME:-$HOME/.local/share}/crackle/vim-runtime${VIMRUNTIME}/debian.vim;
+	for i in vimdiff rvim rview vi view ex editor ; do
+	update-alternatives --quiet --altdir $APTCONFIG --admindir ${APTSTATE} --install $PKG_PREFIX/bin/$i $i $PKG_PREFIX/bin/vim 30
+	done
+}

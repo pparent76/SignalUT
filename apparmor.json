@@ -1,0 +1,21 @@
+{
+    "template": "unconfined",
+    "policy_version": 20.04,
+    "policy_groups": [
+    "networking",
+         "audio",
+         "video"],
+    "read_path": [
+        "/home/phablet/.config/Signal/",
+        "/etc/gtk-3.0/settings.ini",
+        "/run/user/",
+        "/run/user/32011/dconf/user",
+        "/proc/sys/fs/inotify/max_user_watches"
+    ],
+    "write_path": [
+        "/home/phablet/.config/Signal/",
+        "/run/user/",
+        "/run/user/32011/dconf/user",
+        "/dev/shm/"
+    ]
+}

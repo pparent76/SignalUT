@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+function setup_microsoft (){
+        #repo key
+        REPO_KEY=("https://packages.microsoft.com/keys/microsoft.asc")
+	wget -q $REPO_KEY -O $APTCONFIG/trusted.gpg.d/microsoft.asc
+}

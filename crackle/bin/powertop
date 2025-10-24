@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+function install_powertop (){
+	say "Setting up ${pkgname}";
+	${PKG_PATH}/patchelf/usr/bin/patchelf --set-rpath ${PKG_PATH}/libpci3/usr/lib/${ARCH_TRIPLET} ${PKG_PATH}/powertop/usr/sbin/powertop
+}

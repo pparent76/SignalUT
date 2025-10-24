@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+function install_mc-data(){
+	say "Setting up ${pkgname}";
+        ln -s $PKG_PATH/mc/etc/mc/sfs.ini $PKG_PATH/mc-data/usr/share/mc
+}

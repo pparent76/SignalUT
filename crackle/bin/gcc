@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+function install_gcc (){
+	say "Setting up ${pkgname}";
+	update-alternatives --altdir $APTCONFIG --admindir ${APTSTATE} --quiet \
+	    --install $PKG_PREFIX/bin/cc cc $PKG_PREFIX/bin/gcc 20
+
+	update-alternatives --altdir $APTCONFIG --admindir ${APTSTATE} --quiet \
+	    --install $PKG_PREFIX/bin/c89 c89 $PKG_PREFIX/bin/c89-gcc 20
+
+	update-alternatives --altdir $APTCONFIG --admindir ${APTSTATE} --quiet \
+	    --install $PKG_PREFIX/bin/c99 c99 $PKG_PREFIX/bin/c99-gcc 20
+}

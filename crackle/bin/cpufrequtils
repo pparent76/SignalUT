@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+function install_cpufrequtils (){
+	say "Setting up ${pkgname}";
+	${PKG_PATH}/patchelf/usr/bin/patchelf --set-rpath ${PKG_PATH}/libcpufreq0/usr/lib ${PKG_PATH}/cpufrequtils/usr/bin/cpufreq-info
+	${PKG_PATH}/patchelf/usr/bin/patchelf --set-rpath ${PKG_PATH}/libcpufreq0/usr/lib ${PKG_PATH}/cpufrequtils/usr/bin/cpufreq-set                             
+}

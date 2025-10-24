@@ -1,0 +1,24 @@
+[Unit]
+Description=Tailscale node agent
+Documentation=https://tailscale.com/kb/
+Wants=network-pre.target
+After=network-pre.target NetworkManager.service systemd-resolved.service
+
+[Service]
+EnvironmentFile=/root/.config/default/tailscaled
+ExecStartPre=/root/.local/bin/tailscaled --cleanup
+ExecStart=/root/.local/bin/tailscaled --state=/root/.local/state/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=${PORT} $FLAGS
+ExecStopPost=/root/.local/bin/tailscaled --cleanup
+
+Restart=on-failure
+
+RuntimeDirectory=tailscale
+RuntimeDirectoryMode=0755
+StateDirectory=/root/.local/state/tailscale
+StateDirectoryMode=0700
+CacheDirectory=/root/.local/state/tailscale
+CacheDirectoryMode=0750
+Type=notify
+
+[Install]
+WantedBy=multi-user.target

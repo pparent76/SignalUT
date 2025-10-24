@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+function install_git(){
+	say "Setting up ${pkgname}";
+        echo "export GPG_TTY=\$(tty)" > ${CRACKLEENV}/${pkgname}
+	echo "export GIT_EXEC_PATH=${PKG_PREFIX}/lib/git-core" >> ${CRACKLEENV}/${pkgname}
+	echo "export GITPERLLIB=${PKG_PATH}/git/usr/share/perl5:${PKG_PATH}/liberror-perl/usr/share/perl5" >> ${CRACKLEENV}/${pkgname}
+	${PKG_PREFIX}/bin/git config --global init.templatedir "${PKG_PATH}/git/usr/share/git-core/templates/"
+}
