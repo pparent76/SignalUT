@@ -31,6 +31,8 @@ This app is temporarily based on the **Signal-Desktop binaries** from the [offic
    - Limited: no GPU, microphone, or desktop notifications support.  
 2. **Unconfined**  
    - No such limitations.
+   
+⚠️ You cannot switch seamlessly from one to the other. You need to delete all the data of the app, and then the app itself, before instaling the other variant.
 
 ---
 
