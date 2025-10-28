@@ -10,7 +10,7 @@
             "desktop":  "signalut.desktop"
         }
     },
-    "version": "0.1.1",
+    "version": "0.1.2",
     "maintainer": "Pierre Parent <pro@pierre-parent.fr>",
     "framework" : "ubuntu-sdk-20.04"
 }
