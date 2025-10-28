@@ -16,5 +16,4 @@ sandboxoptions="--no-sandbox"
 sleep 0.2
 
 mkdir -p /home/phablet/.cache/signalut.pparent/
-exec ./opt/Signal/signal-desktop $dpioptions $gpuoptions $sandboxoptions >/home/phablet/.cache/signalut.pparent/log 2>&1
-
+exec ./opt/Signal/signal-desktop $dpioptions $gpuoptions $sandboxoptions
