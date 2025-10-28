@@ -11,5 +11,6 @@
          "content_exchange_source",
          "keep-display-on",
          "push-notification-client"
-         ]
+         ],
+    "template": "unconfined"   
 }

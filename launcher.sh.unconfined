@@ -6,11 +6,10 @@ export GTK_IM_MODULE_FILE=lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/immodule
 export GDK_BACKEND=x11 
 export DISABLE_WAYLAND=1 
 export DCONF_PROFILE=/nonexistent
-export LIBGL_ALWAYS_SOFTWARE=1
 export XDG_CONFIG_HOME=/home/phablet/.config/signalut.pparent/
 
 dpioptions="--high-dpi-support=1 --force-device-scale-factor=2.5"
-gpuoptions="--disable-gpu --disable-software-rasterizer  --in-process-gpu"
+gpuoptions=""
 sandboxoptions="--no-sandbox"
 
 sleep 0.2

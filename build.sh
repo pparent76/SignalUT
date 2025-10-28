@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e  # Exit immediately on error
-
+if [ "$UNCONFINED" = "true" ]; then
+echo "WARNING: building unconfined!"
+fi
 
 # ========================
 # PROJECT CONFIGURATION
@@ -44,6 +46,7 @@ DOWNLOAD_URL=$(curl -s https://api.snapcraft.io/v2/snaps/info/signal-desktop -H 
             | select(.channel.architecture=="arm64" and .channel.name=="stable") 
             | .download.url'
             )
+echo "Downloading $DOWNLOAD_URL...."
 curl -L -o "$SNAP_FILE" "$DOWNLOAD_URL"
 # ========================
 # STEP 3: EXTRACTION
@@ -60,16 +63,24 @@ mkdir -p "$INSTALL_DIR/opt/"
 cp -r "$EXTRACT_DIR/opt/Signal" "$INSTALL_DIR/opt/" || true
 
 # Copy project files
-cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
+
 cp ${ROOT}/signalut.desktop "$INSTALL_DIR/"
 cp ${ROOT}/icon.png "$INSTALL_DIR/"
 cp ${ROOT}/icon-splash.png "$INSTALL_DIR/"
 cp ${ROOT}/manifest.json "$INSTALL_DIR/"
-cp ${ROOT}/signalut.apparmor "$INSTALL_DIR/"
+
+if [ "$UNCONFINED" = "true" ]; then
+    echo "UNCONFINED!"
+    cp ${ROOT}/signalut.apparmor.unconfined "$INSTALL_DIR/signalut.apparmor"
+    cp ${ROOT}/launcher.sh.unconfined "$INSTALL_DIR/launcher.sh"
+    jq '.version = (.version + "-unconfined")' ${INSTALL_DIR}/manifest.json > ${INSTALL_DIR}/tmp.json && mv ${INSTALL_DIR}/tmp.json ${INSTALL_DIR}/manifest.json
+else
+    cp ${ROOT}/signalut.apparmor "$INSTALL_DIR/"
+    cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
+fi
 
 chmod +x $INSTALL_DIR/launcher.sh
 chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
-#chmod +x $INSTALL_DIR/opt/Signal/chrome-sandbox
 chmod +x $INSTALL_DIR/opt/Signal/chrome_crashpad_handler
 
 # ========================

@@ -1,0 +1,5 @@
+clickable_minimum_required: 8.0.0
+builder: custom
+build: UNCONFINED=true ${ROOT}/build.sh
+build_dir: build-unconfined
+dependencies_host: ["qemu-user-static" , "tree" , "patchelf", "git", "jq", "snapd"]
