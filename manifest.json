@@ -1,16 +1,16 @@
 {
     "name": "signalut.pparent",
-    "description": "Signal for Ubuntu Touch based on Signal-Desktop",
+    "description": "Signal-desktop for Ubuntu Touch with responsive design",
     "architecture": "@CLICK_ARCH@",
 
-    "title": "signallauncher",
+    "title": "Signal UT",
     "hooks": {
         "signallauncher": {
             "apparmor": "signalut.apparmor",
             "desktop":  "signalut.desktop"
         }
     },
-    "version": "0.1.0",
+    "version": "0.1.1",
     "maintainer": "Pierre Parent <pro@pierre-parent.fr>",
     "framework" : "ubuntu-sdk-20.04"
 }
