@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=Signal
-Comment=Signal Desktop Launcher
+Name=Signal UT
+Comment=Signal UT Launcher
 Exec=./launcher.sh
 Terminal=false
 Type=Application
