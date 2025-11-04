@@ -1,1 +1,0 @@
-deb [signed-by=$HOME/.config/crackle/trusted.gpg.d/microsoft.asc] https://packages.microsoft.com/repos/edge stable main

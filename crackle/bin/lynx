@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-function install_lynx(){
-	say "Setting up ${pkgname}";
-	echo "export LYNX_CFG=${PKG_PATH}/lynx-common/etc/lynx" > $CRACKLEENV/${pkgname}
-echo "export LYNX_LSS=${PKG_PATH}/lynx-common/etc/lynx" >> $CRACKLEENV/${pkgname}
-}

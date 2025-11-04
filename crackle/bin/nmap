@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-function install_nmap (){
-	say "Setting up ${pkgname}";
-        $PKG_PATH/patchelf/usr/bin/patchelf --set-rpath $PKG_PATH/usr/lib/$ARCH_TRIPLET/blas $PKG_PATH/usr/lib/$ARCH_TRIPLET/liblinear.so.4
-}

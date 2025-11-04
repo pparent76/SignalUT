@@ -8,12 +8,23 @@ export DISABLE_WAYLAND=1
 export DCONF_PROFILE=/nonexistent
 export XDG_CONFIG_HOME=/home/phablet/.config/signalut.pparent/
 
-dpioptions="--high-dpi-support=1 --force-device-scale-factor=2.5"
+if [ "$DISPLAY" = "" ]; then
+    i=0
+    while [ -e "/tmp/.X11-unix/X$i" ] ; do 
+        i=$(( i + 1 ))
+    done
+    i=$(( i - 1 ))
+    display=":$i"
+    export DISPLAY=$display
+fi
+
+export PATH=$PWD/bin:$PATH
+
+dpioptions="--high-dpi-support=1 --force-device-scale-factor=2.75"
 gpuoptions=""
 sandboxoptions="--no-sandbox"
 
-sleep 0.2
+#Open a dummy qt gui app to realease lomiri from its waiting
+(sleep.sh; $PWD/bin/xdg-open)&
 
-mkdir -p /home/phablet/.cache/signalut.pparent/
-exec ./opt/Signal/signal-desktop $dpioptions $gpuoptions $sandboxoptions >/home/phablet/.cache/signalut.pparent/log 2>&1
-
+exec ./opt/Signal/Signal $dpioptions $gpuoptions $sandboxoptions

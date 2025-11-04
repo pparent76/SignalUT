@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-function install_tailscale-archive-keyring (){
-	say "Setting up ${pkgname}";
-	rm $APTCONFIG/trusted.gpg.d/tailscale-archive-keyring.gpg
-	ln -s $PKG_PATH/tailscale-archive-keyring/usr/share/keyrings/tailscale-archive-keyring.gpg $APTCONFIG/trusted.gpg.d/
-}

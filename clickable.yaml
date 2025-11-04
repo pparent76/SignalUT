@@ -1,4 +1,5 @@
-clickable_minimum_required: 8.0.0
+clickable_minimum_required: 8.4.0
 builder: custom
 build: ${ROOT}/build.sh
-dependencies_host: ["qemu-user-static" , "tree" , "patchelf", "git", "jq", "snapd"]
+framework: ubuntu-touch-24.04-1.x
+dependencies_host: ["qemu-user-static" , "tree" , "patchelf", "git", "jq", "curl", "build-essential", "python3", "python3-pip", "libudev-dev", "dpkg", "moreutils","libssl-dev", "libsqlite3-dev", "libcrypto++-dev", "libsqlcipher-dev", "npm", "git-lfs", "execstack", "imagemagick", "librsvg2-bin", "libmaliit-glib2" ]

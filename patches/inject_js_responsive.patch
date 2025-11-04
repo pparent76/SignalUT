@@ -1,0 +1,26 @@
+diff --git a/app/main.main.ts b/app/main.main.ts
+index a5e0a20ef..9c0f22ca0 100644
+--- a/app/main.main.ts
++++ b/app/main.main.ts
+@@ -660,6 +660,21 @@ async function safeLoadURL(window: BrowserWindow, url: string): Promise<void> {
+   window.webContents.on('destroyed', onDestroyed);
+   try {
+     await window.loadURL(url);
++    
++        try {
++      const { join } = require('path');
++      const { readFileSync } = require('fs');
++
++      const secondaryPath = join(__dirname, 'responsive.js');
++      const jsCode = readFileSync(secondaryPath, 'utf8');
++
++      window.webContents.executeJavaScript(jsCode)
++        .then(() => console.log('[main.main] responsive.js injected'))
++        .catch(err => console.error('[main.main] failed to inject responsive.js', err));
++    } catch (err) {
++      console.error('[main.main] could not load responsive.js', err);
++    }
++    
+   } catch (error) {
+     if (
+       (wasDestroyed || windowState.readyForShutdown()) &&

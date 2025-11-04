@@ -8,7 +8,7 @@ Icon=icon.png
 X-Ubuntu-Touch=true
 X-Lomiri-Touch=true
 
-X-Ubuntu-Splash-Color=#4c82f2
+X-Ubuntu-Splash-Color=#3943fd
 X-Ubuntu-Splash-Image=icon-splash.png
 
 Name[en_US]=Signal

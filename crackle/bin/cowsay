@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-function install_cowsay(){
-	say "Setting up ${pkgname}";
-	echo 'export COWPATH="${XDG_DATA_HOME:-$HOME/.local/share}/crackle/cowsay/usr/share/cowsay/cows"' > ${CRACKLEENV}/${pkgname}
-}

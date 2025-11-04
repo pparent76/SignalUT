@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-function setup_mozilla (){
-        #repo key
-        REPO_KEY=("https://packages.mozilla.org/apt/repo-signing-key.gpg")
-	wget -q $REPO_KEY -O $APTCONFIG/trusted.gpg.d/packages.mozilla.org.asc
-}
