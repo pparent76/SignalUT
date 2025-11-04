@@ -12,16 +12,7 @@ Signal UT is currently in **alpha**. Please read the limitations and usage notes
 
 ### Known Issues
 
-- **Crashes when started from OpenStore**: After installation, **launch the app from the application grid**, not directly from OpenStore.
-- **High battery usage**: A bug in Xmir causes significant battery drain, especially when the phone is suspended. **Do not keep the app running in the background**.
 - **Keyboard issues on startup**: Right after launching, **Enter** and **Back** keys may not work. To fix this, **lock and unlock the phone while Signal UT is in the foreground**.
-- **Interface not fully responsive yet**:  
-  - Hide the left panel and minimize the chat list for a usable interface on phones.  
-  - The message input area is currently hidden by the keyboard.  
-
-### About the binaries
-
-This app is temporarily based on the **Signal-Desktop binaries** from the [official Snap](https://snapcraft.io/signal-desktop). The author **cannot be held responsible** for any issues with these binaries.
 
 ---
 
