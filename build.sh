@@ -124,14 +124,13 @@ URL1="http://launchpadlibrarian.net/722617417/maliit-inputcontext-gtk3_0.99.1+gi
 URL2="http://launchpadlibrarian.net/723291297/libmaliit-glib2_2.3.0-4build5_arm64.deb"
 
 # Téléchargement des fichiers .deb
-echo "Téléchargement des paquets..."
 wget -q "$URL1" -O "${BUILD_DIR}/pkg1.deb"
 wget -q "$URL2" -O "${BUILD_DIR}/pkg2.deb"
 
 # Extraction des paquets
 cd "${BUILD_DIR}"
 for PKG in pkg1.deb pkg2.deb; do
-    rm -r "${PKG%.deb}_extract_chsdjksd"
+    rm -rvf "${PKG%.deb}_extract_chsdjksd" || true
     mkdir "${PKG%.deb}_extract_chsdjksd"
     dpkg-deb -x "$PKG" "${PKG%.deb}_extract_chsdjksd"
 done

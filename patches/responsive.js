@@ -248,9 +248,10 @@ function main(){
   },1000);
   
   //Disable Over
-  ["mouseover", "mouseenter", "mousemove"].forEach(eventType => {
+  ["mouseenter"].forEach(eventType => {
   document.addEventListener(eventType, e => {
-    e.stopImmediatePropagation();
+    if (e.target.firstChild.classList.contains("NavTabs__ItemButton")&& e.target.parentNode.classList.contains("NavTabs__Toggle"))
+        e.stopImmediatePropagation();
   }, true); // useCapture = true pour intercepter avant les autres handlers
   });
 
