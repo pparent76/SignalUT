@@ -100,7 +100,7 @@ echo "[3/8] Building Signal-Desktop..."
 echo "[4/8] Making logos..." 
 rsvg-convert --width 2000 --height 2000 ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.svg > ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png
 convert  -background "#3943fd" ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png -resize 1000x  -bordercolor "#3943fd"  -border 300 ${BUILD_DIR}/icon.png
-convert  -background none ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png -resize 600x  -bordercolor none  -border 700 ${BUILD_DIR}/icon-splash.png
+convert  -background none ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png -resize 350x  -bordercolor none  -border 875 ${BUILD_DIR}/icon-splash.png
 
 
 # ===================================

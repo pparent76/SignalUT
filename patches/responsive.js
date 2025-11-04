@@ -39,8 +39,23 @@ const X = {
    buttonTogleLeftMenuHelper: () => document.querySelector('.NavTabs__ItemLabel')
 };
 
-var phoneKeyboardHeightPortrait = 38; // percent of screen
-var phoneKeyboardHeightLandscape = 60; // percent of screen
+var tabletWordribbonHeight = 6; // gu
+var phoneWordribbonHeight = 4; // gu
+
+var phoneKeyboardHeightPortrait = 40; // percent of screen
+var phoneKeyboardHeightLandscape = 57; // percent of screen
+
+var tabletKeyboardHeightPortrait = 31; // percent of screen
+var tabletKeyboardHeightLandscape = 47; // percent of scree
+
+var keyboardMargin = 7; //px
+
+function guToPx(gu) {
+  const GRID_UNIT_PX=23;
+  const scalingFactor = 2.75;
+  //const pxPerMm = (96 / 25.4) * window.devicePixelRatio;
+  return Math.round(gu * GRID_UNIT_PX/ scalingFactor);
+}
 
     
 // Declare variables
@@ -146,7 +161,35 @@ function main(){
     }
     else if ( X.messageEditor().contains(lastFocusEl))
     {
-      X.messageEditor().style.paddingBottom=(window.innerWidth > window.innerHeight ? phoneKeyboardHeightLandscape : phoneKeyboardHeightPortrait) + "vh";
+      var isTablet=false;
+      if (window.innerWidth > guToPx(90) || window.innerHeight > guToPx(90))
+         isTablet=true;
+      if (window.innerWidth > window.innerHeight)
+      {
+        if (isTablet)
+        {
+        var pixel=guToPx(tabletWordribbonHeight)+keyboardMargin;
+        X.messageEditor().style.paddingBottom=`calc(${tabletKeyboardHeightLandscape}vh + ${pixel}px)`;
+        }
+        else
+        {
+        var pixel=guToPx(phoneWordribbonHeight)+keyboardMargin;
+        X.messageEditor().style.paddingBottom=`calc(${phoneKeyboardHeightLandscape}vh + ${pixel}px)`;
+        }
+      }
+      else
+      {
+        if (isTablet)
+        {
+        var pixel=guToPx(tabletWordribbonHeight)+keyboardMargin;
+        X.messageEditor().style.paddingBottom=`calc(${tabletKeyboardHeightPortrait}vh + ${pixel}px)`;
+        }
+        else
+        {
+        var pixel=guToPx(phoneWordribbonHeight)+keyboardMargin;
+        X.messageEditor().style.paddingBottom=`calc(${phoneKeyboardHeightPortrait}vh + ${pixel}px)`;
+        }
+      }
     }
     else
       X.messageEditor().style.paddingBottom=""
