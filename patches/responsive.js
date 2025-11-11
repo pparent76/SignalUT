@@ -114,6 +114,23 @@ var checkExist = setInterval(function() {
 }, 1000);
 
 
+const STYLE_ID = 'composition-hidden-style';
+
+function addHiddenCSS() {
+  if (document.getElementById(STYLE_ID)) return; // idempotent
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  // !important pour garantir l'écrasement si nécessaire
+  style.textContent = `.CompositionArea { visibility: hidden !important; }`;
+  document.head.appendChild(style);
+}
+
+function removeHiddenCSS() {
+  const style = document.getElementById(STYLE_ID);
+  if (style) style.remove();
+}
+
+
 //----------------------------------------------------------------------
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //                Main function
@@ -123,6 +140,7 @@ function main(){
   console.log("Call main function")
   
   // //Adapt fontsize
+  addCss(".NavSidebar { transition: transform 0.25s ease-in-out !important }")
   // addCss(".customDialog { transform: scaleX(0.8) scaleY(0.8) !important; transition: transform 0.3s ease !important; }");    
   // addCss(".emojiDialog { transform: scaleX(0.7) scaleY(0.7) !important; transition: transform 0.3s ease !important; transformOrigin = left bottom !important; left:2% !important; }");     
   // addCss("span { font-size: "+window.appConfig.spanFontSize+"% !important; }");    
@@ -276,7 +294,7 @@ window.addEventListener("click", function() {
         showchatWindow();
   else
   {
-  if (X.textEditor().contains(lastClickEl))
+  if (X.textEditor().contains(lastClickEl)|| lastClickEl.contains(X.textEditor()))
       {
        X.textEditor().setAttribute('contenteditable', "plaintext-only");
        X.textEditor().classList.remove('contenteditableDisabled');
@@ -299,7 +317,7 @@ document.body.addEventListener("focusin", function() {
   if (document.querySelector(".NavTabs--collapsed"))
   {
     console.log("Activate left menu")
-    X.chatList().style.left= '';
+    X.chatList().style.transform= 'translateX(0)';
     X.chatList().style.position= 'static';
     X.chatList().style.minWidth= '';
   }
@@ -307,7 +325,7 @@ document.body.addEventListener("focusin", function() {
   {
     console.log("Disable left menu")
     X.chatList().style.position= 'absolute';
-    X.chatList().style.left= '0';
+    X.chatList().style.transform= 'translateX(-100%)';
     X.chatList().style.minWidth= '100%';
     setTimeout( () => {
      X.chatList().style.zIndex = "1000"
@@ -347,12 +365,13 @@ function showchatlist(){
  //   toggleLeftMenu()
   
   setTimeout( () => {
-    X.chatWindow().style.visibility="hidden"
+    addHiddenCSS()
   },500);
   //Slide back Chatlist panel to main view  
-  X.chatList().style.transition= "left 0.25s ease-in-out";
   X.chatList().style.position= 'absolute';
-  X.chatList().style.left= '0'; 
+  X.chatList().style.transform = 'translateX(0)';
+  X.chatList().style.transition= "transform 0.25s ease-in-out;";
+  X.chatList().style.willChange= "transform";  
   X.chatList().width="100%"
   X.chatList().minWidth="100%"
   X.chatList().style.zIndex = "1000"
@@ -371,12 +390,14 @@ function showchatWindow(){
    
    X.chatWindow().style.position=""
    X.chatWindow().style.left=""
-   X.chatWindow().style.visibility=""
+   removeHiddenCSS();
    
    //Slide Chatlist panel to the left
-   X.chatList().style.transition= "left 0.25s ease-in-out";
    X.chatList().style.position= 'absolute'; 
-   X.chatList().style.left= "-100%";
+   void X.chatList().offsetWidth;
+   X.chatList().style.transform = 'translateX(-100%)'; // transition se déclenche ici
+   X.chatList().style.transition= "transform 0.25s ease-in-out !important";
+   X.chatList().style.willChange= "transform";
    X.chatList().style.minWidth= '100%';
    
   //Hide left menu (in case it was oppened)
@@ -396,13 +417,17 @@ function addBackButtonToChatViewWithTimeout()
     
     setTimeout(() => {
     addBackButtonToChatView();
+    }, 600); 
+    
+    setTimeout(() => {
+    addBackButtonToChatView();
     }, 1500); 
   
 }
 
 function backupBackButton()
 {
- if (X.chatList().style.left== "-100%") {
+ if (X.chatList().style.transform== "translateX(-100%)") {
   if (  X.chatHeader() )
   {
     if (! X.chatHeader().querySelector('#back_button') )
