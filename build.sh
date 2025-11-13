@@ -22,7 +22,7 @@ if [ ! -e "Signal-Desktop" ]; then
 fi
 cd ${BUILD_DIR}/Signal-Desktop
 git pull
-git checkout 7.77.x
+git checkout 7.79.x
 
 # ========================
 # STEP 2: APPLY PATCHES
@@ -35,12 +35,12 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     
     if [ ! -e ".bump_electronbuilder_version-applyed" ]; then
         echo "Apply bump_electronbuilder_version.patch"
-        git apply ${ROOT}/patches/bump_electronbuilder_version.patch
+        git apply ${ROOT}/patches/Signal-Desktop/bump_electronbuilder_version.patch
         touch .bump_electronbuilder_version-applyed
     fi
     
     echo "Add fs-extra+11.2.0.patch patches"
-    cp ${ROOT}/patches/fs-extra+11.2.0.patch patches/
+    cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.2.0.patch patches/
     
     echo "Ajust package.json"
     cat package.json | jq -r --arg fs_extra patches/fs-extra+11.2.0.patch '.pnpm.patchedDependencies."fs-extra"=$fs_extra ' | sponge package.json
@@ -48,12 +48,12 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     #Patch to make the app responsive
     if [ ! -e ".fix-inject-responsive.patch-applyed" ]; then
         echo "Apply fix-inject-responsive.patch"
-        git apply ${ROOT}/patches/inject_js_responsive.patch
+        git apply ${ROOT}/patches/Signal-Desktop/inject_js_responsive.patch
         touch .fix-inject-responsive.patch-applyed
     fi
     
     echo "Add responsive.js"
-    cp ${ROOT}/patches/responsive.js ${BUILD_DIR}/Signal-Desktop/app/
+    cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/app/
     
 fi
 
@@ -107,7 +107,7 @@ convert  -background none ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png 
 # STEP 5: BUILD THE FAKE xdg-open
 # ===================================
 echo "[5/8] Building fake xdg-open ..."
-cp -r ${ROOT}/xdg-open/ ${BUILD_DIR}/
+cp -r ${ROOT}/utils/xdg-open/ ${BUILD_DIR}/
 cd ${BUILD_DIR}/xdg-open/
 mkdir -p build
 cd build
@@ -118,18 +118,19 @@ mkdir -p $INSTALL_DIR/bin/
 # =================================================
 # STEP 6: Downloading maliit-inputcontext-gtk3
 # =================================================
-echo "[6/8] Downloading maliit-inputcontext-gtk3 ..."
+echo "[6/8] Building maliit-inputcontext-gtk3 and download dependencies..."
+
 # URLs des paquets .deb
-URL1="http://launchpadlibrarian.net/722617417/maliit-inputcontext-gtk3_0.99.1+git20151116.72d7576-3build3_arm64.deb"
 URL2="http://launchpadlibrarian.net/723291297/libmaliit-glib2_2.3.0-4build5_arm64.deb"
+XDOTOOL_URL="http://launchpadlibrarian.net/599174155/xdotool_3.20160805.1-5_arm64.deb"
 
 # Téléchargement des fichiers .deb
-wget -q "$URL1" -O "${BUILD_DIR}/pkg1.deb"
 wget -q "$URL2" -O "${BUILD_DIR}/pkg2.deb"
+wget -q "$XDOTOOL_URL" -O "${BUILD_DIR}/xdotool.deb"
 
 # Extraction des paquets
 cd "${BUILD_DIR}"
-for PKG in pkg1.deb pkg2.deb; do
+for PKG in pkg2.deb xdotool.deb; do
     rm -rvf "${PKG%.deb}_extract_chsdjksd" || true
     mkdir "${PKG%.deb}_extract_chsdjksd"
     dpkg-deb -x "$PKG" "${PKG%.deb}_extract_chsdjksd"
@@ -137,10 +138,52 @@ done
 
 # Copie des fichiers du dossier /lib/ de chaque paquet
 rm -rvf $INSTALL_DIR/lib
-cp -r ${ROOT}/lib "$INSTALL_DIR/"
+mkdir -p "$INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/"
 for DIR in *_extract_chsdjksd; do
+    if [ -d "$DIR/usr/lib/aarch64-linux-gnu/" ]; then
         cp -r "$DIR/usr/lib/aarch64-linux-gnu/"* "$INSTALL_DIR/lib/aarch64-linux-gnu/"
+    fi
 done
+
+cp ${ROOT}/patches/maliit-inputcontext-gtk/immodules.cache $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
+# Copie des binaires xdotool dans bin/
+mkdir -p "$INSTALL_DIR/bin"
+cp *_extract_chsdjksd/usr/bin/xdotool "$INSTALL_DIR/bin/"
+
+
+PKGNAME="maliit-inputcontext-gtk"
+VERSION="0.99.1+git20151116.72d7576"
+ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576.orig.tar.xz"
+DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576-3build3.debian.tar.xz"
+
+
+
+WORKDIR_MALIIT="${PKGNAME}-${VERSION}"
+rm -r $WORKDIR_MALIIT/
+mkdir -p "$WORKDIR_MALIIT"
+cd "$WORKDIR_MALIIT"
+
+
+
+echo "📦 Téléchargement des sources..."
+wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION}.orig.tar.xz"
+wget -q "$DEBIAN_URL" -O "${PKGNAME}_${VERSION}.debian.tar.xz"
+
+echo "📂 Extraction du code source original..."
+tar -xf "${PKGNAME}_${VERSION}.orig.tar.xz"
+SRC_DIR_MALIIT=$(tar -tf "${PKGNAME}_${VERSION}.orig.tar.xz" | head -1 | cut -d/ -f1)
+
+echo "📂 Extraction des fichiers Debian..."
+tar -xf "${PKGNAME}_${VERSION}.debian.tar.xz" -C "$SRC_DIR_MALIIT"
+
+cd ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION/
+patch ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION/gtk-input-context/client-gtk/client-imcontext-gtk.c  ${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch
+echo "${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch"
+EDITOR=true dpkg-source --commit . fix-keyboard
+DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
+
+cp ${BUILD_DIR}/$WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
+
 
 # ==============================
 # STEP 6: Copying files
@@ -167,13 +210,16 @@ else
     cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
 fi
 
-cp ${ROOT}/sleep.sh "$INSTALL_DIR/"
+mkdir -p "$INSTALL_DIR/utils/"
+cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
+cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
 
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
 
-chmod +x $INSTALL_DIR/sleep.sh
+chmod +x $INSTALL_DIR/utils/sleep.sh
+chmod +x $INSTALL_DIR/utils/get-scale.sh
 chmod +x $INSTALL_DIR/launcher.sh
-chmod +x $INSTALL_DIR/opt/Signal/Signal
+chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
 chmod +x $INSTALL_DIR/opt/Signal/chrome_crashpad_handler
 
 

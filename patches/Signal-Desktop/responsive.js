@@ -298,7 +298,9 @@ window.addEventListener("click", function() {
       {
        X.textEditor().setAttribute('contenteditable', "plaintext-only");
        X.textEditor().classList.remove('contenteditableDisabled');
-       X.textEditor().focus()
+       if (!X.textEditor().isFocused || !X.textEditor().isFocused()) {
+          X.textEditor().focus()
+       }
       }
   }
   

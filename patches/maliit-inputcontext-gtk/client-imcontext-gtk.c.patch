@@ -1,0 +1,67 @@
+diff --git a/gtk-input-context/client-gtk/client-imcontext-gtk.c b/gtk-input-context/client-gtk/client-imcontext-gtk.c
+index e26ce37..40e900d 100644
+--- a/gtk-input-context/client-gtk/client-imcontext-gtk.c
++++ b/gtk-input-context/client-gtk/client-imcontext-gtk.c
+@@ -32,6 +32,33 @@
+ #include "client-imcontext-gtk.h"
+ #include "qt-gtk-translate.h"
+ #include "debug.h"
++#include <stdlib.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <stdio.h>
++
++void xdotool_hack_unlock_keyboard() {
++    DBG("Calling xdotool Hack")
++    pid_t pid = fork();
++    if (pid < 0) {
++        DBG("fork failed");
++        return;
++    }
++
++    if (pid == 0) {
++        // enfant : remplacer le processus par xdotool
++        execlp("xdotool", "xdotool", "key", "Shift_L", (char *)NULL);
++
++        // si exec échoue
++        DBG("execlp failed");
++        _exit(1);
++    } else {
++        // parent : optionnel, attendre que l'enfant se termine
++        int status;
++        waitpid(pid, &status, 0);
++    }
++}
+ 
+ static GType _maliit_im_context_type = 0;
+ static GtkIMContextClass *parent_class = NULL;
+@@ -378,6 +405,8 @@ maliit_im_context_focus_in(GtkIMContext *context)
+         g_clear_error(&error);
+     }
+ 
++    if ( ! im_context->client_window )
++        xdotool_hack_unlock_keyboard();
+     // TODO: anything else than call "activateContext" and "showInputMethod" ?
+ }
+ 
+@@ -734,6 +763,7 @@ maliit_im_context_commit_string(MaliitContext *obj,
+         g_signal_emit_by_name(focused_im_context, "preedit-changed");
+         g_signal_emit_by_name(focused_im_context, "commit", string);
+         maliit_context_complete_commit_string(obj, invocation);
++        maliit_im_context_reset(GTK_IM_CONTEXT(im_context));
+         return TRUE;
+     }
+ 
+@@ -896,6 +926,11 @@ maliit_im_context_key_event(MaliitContext *obj,
+ 
+     if (focused_im_context)
+         window = focused_im_context->client_window;
++    
++    if ( !window )
++    {
++        xdotool_hack_unlock_keyboard();
++    }
+ 
+     event = qt_key_event_to_gdk(type, key, modifiers, text, window);
+     if (!event)
