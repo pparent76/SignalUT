@@ -159,7 +159,7 @@ DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-in
 
 
 WORKDIR_MALIIT="${PKGNAME}-${VERSION}"
-rm -r $WORKDIR_MALIIT/
+rm -rvf $WORKDIR_MALIIT/ || true
 mkdir -p "$WORKDIR_MALIIT"
 cd "$WORKDIR_MALIIT"
 
