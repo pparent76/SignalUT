@@ -20,6 +20,7 @@ const X = {
       chatlistHeader: () => document.querySelector('.NavSidebar__HeaderContent'),
     chatWindow: () => document.querySelector('.Inbox__conversation-stack'),
       chatHeader: () => document.querySelector('.module-ConversationHeader__header'),
+      moduleTimelineMessages: () => document.querySelector('.module-timeline__messages__container'),
   //-------------------------------------------------------------------------------------------
 
   upperWrapper: () => document.querySelector('.three'),
@@ -140,7 +141,15 @@ function main(){
   console.log("Call main function")
   
   // //Adapt fontsize
+  try{
   addCss(".NavSidebar { transition: transform 0.25s ease-in-out !important }")
+  document.documentElement.style.setProperty("--axo-scrollbar-gutter-thin-vertical","6px")
+  addCss(".module-timeline__messages__container:not(:hover) {scrollbar-color: transparent transparent;}")
+  addCss(".module-timeline__messages__container{ scrollbar-width: thin !important ; }");
+  }
+  catch (e) {
+  console.error(e);
+  }
   // addCss(".customDialog { transform: scaleX(0.8) scaleY(0.8) !important; transition: transform 0.3s ease !important; }");    
   // addCss(".emojiDialog { transform: scaleX(0.7) scaleY(0.7) !important; transition: transform 0.3s ease !important; transformOrigin = left bottom !important; left:2% !important; }");     
   // addCss("span { font-size: "+window.appConfig.spanFontSize+"% !important; }");    
