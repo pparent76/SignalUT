@@ -27,6 +27,6 @@ sandboxoptions="--no-sandbox"
 gpuoptions="--use-gl=egl --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-features=UseSkiaRenderer,VaapiVideoDecoder --disable-frame-rate-limit --disable-gpu-vsync --enable-oop-rasterization"
 
 #Open a dummy qt gui app to realease lomiri from its waiting
-(utils/sleep.sh; $PWD/bin/xdg-open)&
+(utils/sleep.sh; $PWD/utils/get-density>/home/phablet/.config/signalut.pparent/qtdensity )&
 
 exec ./opt/Signal/signal-desktop $dpioptions $sandboxoptions $gpuoptions

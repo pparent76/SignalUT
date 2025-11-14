@@ -115,6 +115,13 @@ cmake ..
 make
 mkdir -p $INSTALL_DIR/bin/
 
+cp -r ${ROOT}/utils/get-density/ ${BUILD_DIR}/
+cd ${BUILD_DIR}/get-density/
+mkdir -p build
+cd build
+cmake ..
+make
+
 # =================================================
 # STEP 6: Downloading maliit-inputcontext-gtk3
 # =================================================
@@ -213,6 +220,7 @@ fi
 mkdir -p "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
+cp ${BUILD_DIR}/get-density/build/get-density "$INSTALL_DIR/utils/"
 
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
 
