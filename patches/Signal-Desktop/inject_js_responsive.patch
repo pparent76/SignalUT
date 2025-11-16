@@ -1,22 +1,33 @@
 diff --git a/app/main.main.ts b/app/main.main.ts
-index a5e0a20ef..9c0f22ca0 100644
+index a5e0a20ef..51014a823 100644
 --- a/app/main.main.ts
 +++ b/app/main.main.ts
-@@ -660,6 +660,21 @@ async function safeLoadURL(window: BrowserWindow, url: string): Promise<void> {
+@@ -660,6 +660,32 @@ async function safeLoadURL(window: BrowserWindow, url: string): Promise<void> {
    window.webContents.on('destroyed', onDestroyed);
    try {
      await window.loadURL(url);
 +    
-+        try {
++    try {
 +      const { join } = require('path');
 +      const { readFileSync } = require('fs');
++      const { app } = require('electron');
++
++      const params = {
++        gridUnitPx: app.commandLine.getSwitchValue('grid-unit-px'),
++        forceScale: app.commandLine.getSwitchValue('force-device-scale-factor'),
++      };
 +
 +      const secondaryPath = join(__dirname, 'responsive.js');
 +      const jsCode = readFileSync(secondaryPath, 'utf8');
 +
++      await window.webContents.executeJavaScript(
++        `window.__cmdParams = ${JSON.stringify(params)};`
++      );
++
 +      window.webContents.executeJavaScript(jsCode)
 +        .then(() => console.log('[main.main] responsive.js injected'))
 +        .catch(err => console.error('[main.main] failed to inject responsive.js', err));
++
 +    } catch (err) {
 +      console.error('[main.main] could not load responsive.js', err);
 +    }

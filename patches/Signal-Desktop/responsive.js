@@ -49,11 +49,11 @@ var phoneKeyboardHeightLandscape = 57; // percent of screen
 var tabletKeyboardHeightPortrait = 31; // percent of screen
 var tabletKeyboardHeightLandscape = 47; // percent of scree
 
-var keyboardMargin = 7; //px
+var keyboardMargin = 12; //px
 
 function guToPx(gu) {
-  const GRID_UNIT_PX=23;
-  const scalingFactor = 2.75;
+  const GRID_UNIT_PX=parseFloat(window.__cmdParams.gridUnitPx);
+  const scalingFactor=parseFloat(window.__cmdParams.forceScale);
   //const pxPerMm = (96 / 25.4) * window.devicePixelRatio;
   return Math.round(gu * GRID_UNIT_PX/ scalingFactor);
 }

@@ -22,11 +22,11 @@ export PATH=$PWD/bin:$PATH
 
 scale=$(./utils/get-scale.sh 2>/dev/null )
 
-dpioptions="--high-dpi-support=1 --force-device-scale-factor=$scale"
+dpioptions="--high-dpi-support=1 --force-device-scale-factor=$scale --grid-unit-px=$GRID_UNIT_PX"
 sandboxoptions="--no-sandbox"
 gpuoptions="--use-gl=egl --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-features=UseSkiaRenderer,VaapiVideoDecoder --disable-frame-rate-limit --disable-gpu-vsync --enable-oop-rasterization"
 
 #Open a dummy qt gui app to realease lomiri from its waiting
-(utils/sleep.sh; $PWD/utils/get-density>/home/phablet/.config/signalut.pparent/qtdensity )&
+(utils/sleep.sh; $PWD/bin/xdg-open )&
 
 exec ./opt/Signal/signal-desktop $dpioptions $sandboxoptions $gpuoptions

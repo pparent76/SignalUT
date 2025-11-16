@@ -115,29 +115,27 @@ cmake ..
 make
 mkdir -p $INSTALL_DIR/bin/
 
-cp -r ${ROOT}/utils/get-density/ ${BUILD_DIR}/
-cd ${BUILD_DIR}/get-density/
-mkdir -p build
-cd build
-cmake ..
-make
-
 # =================================================
 # STEP 6: Downloading maliit-inputcontext-gtk3
 # =================================================
 echo "[6/8] Building maliit-inputcontext-gtk3 and download dependencies..."
 
+cd ${BUILD_DIR}
+apt download libhybris-utils:arm64
+mv libhybris-utils_*.deb libhybris-utils.deb
 # URLs des paquets .deb
+URL1="http://launchpadlibrarian.net/599174154/libxdo3_3.20160805.1-5_arm64.deb"
 URL2="http://launchpadlibrarian.net/723291297/libmaliit-glib2_2.3.0-4build5_arm64.deb"
 XDOTOOL_URL="http://launchpadlibrarian.net/599174155/xdotool_3.20160805.1-5_arm64.deb"
 
 # Téléchargement des fichiers .deb
+wget -q "$URL1" -O "${BUILD_DIR}/pkg1.deb"
 wget -q "$URL2" -O "${BUILD_DIR}/pkg2.deb"
 wget -q "$XDOTOOL_URL" -O "${BUILD_DIR}/xdotool.deb"
 
 # Extraction des paquets
 cd "${BUILD_DIR}"
-for PKG in pkg2.deb xdotool.deb; do
+for PKG in pkg1.deb pkg2.deb xdotool.deb libhybris-utils.deb; do
     rm -rvf "${PKG%.deb}_extract_chsdjksd" || true
     mkdir "${PKG%.deb}_extract_chsdjksd"
     dpkg-deb -x "$PKG" "${PKG%.deb}_extract_chsdjksd"
@@ -156,6 +154,7 @@ cp ${ROOT}/patches/maliit-inputcontext-gtk/immodules.cache $INSTALL_DIR/lib/aarc
 # Copie des binaires xdotool dans bin/
 mkdir -p "$INSTALL_DIR/bin"
 cp *_extract_chsdjksd/usr/bin/xdotool "$INSTALL_DIR/bin/"
+cp *_extract_chsdjksd/usr/bin/getprop "$INSTALL_DIR/bin/"
 
 
 PKGNAME="maliit-inputcontext-gtk"
@@ -220,7 +219,6 @@ fi
 mkdir -p "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
-cp ${BUILD_DIR}/get-density/build/get-density "$INSTALL_DIR/utils/"
 
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
 
