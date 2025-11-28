@@ -2,11 +2,13 @@
 
 export GDK_SCALE=2  
 export GTK_IM_MODULE=Maliit 
-export GTK_IM_MODULE_FILE=lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/immodules.cache 
+export GTK_IM_MODULE_FILE=$PWD/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/immodules.cache 
 export GDK_BACKEND=x11 
 export DISABLE_WAYLAND=1 
 export DCONF_PROFILE=/nonexistent
 export XDG_CONFIG_HOME=/home/phablet/.config/signalut.pparent/
+
+export LD_LIBRARY_PATH=$PWD/lib/aarch64-linux-gnu/
 
 if [ "$DISPLAY" = "" ]; then
     i=0
@@ -27,6 +29,10 @@ sandboxoptions="--no-sandbox"
 gpuoptions="--use-gl=egl --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-features=UseSkiaRenderer,VaapiVideoDecoder --disable-frame-rate-limit --disable-gpu-vsync --enable-oop-rasterization"
 
 #Open a dummy qt gui app to realease lomiri from its waiting
-(utils/sleep.sh; $PWD/bin/xdg-open )&
+( utils/sleep.sh; $PWD/bin/xdg-open )&
+( utils/filedialog-deamon.sh $$ )&
 
-exec ./opt/Signal/signal-desktop $dpioptions $sandboxoptions $gpuoptions
+initpwd=$PWD
+utils/mkdir-cache.sh
+cd /home/phablet/.cache/signalut.pparent/downloads/
+exec $initpwd/opt/Signal/signal-desktop $dpioptions $sandboxoptions $gpuoptions
