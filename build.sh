@@ -205,6 +205,7 @@ mkdir -p "$INSTALL_DIR/bin"
 cp *_extract_chsdjksd/usr/bin/xdotool "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/getprop "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/xprop "$INSTALL_DIR/bin/"
+cp *_extract_chsdjksd/usr/bin/xev "$INSTALL_DIR/bin/"
 
 echo "Copying signal-desktop..."
 mkdir -p "$INSTALL_DIR/opt/Signal"

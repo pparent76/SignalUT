@@ -1,13 +1,20 @@
 #!/bin/sh
 
 PID=$1
+needtoexport=0;
+echo "" > /home/phablet/.cache/signalut.pparent/exportlock
 
-while true; do
-windows=$(xdotool search --all --pid $PID --onlyvisible)
+xev -root  | while read -r _; do
+
+  # flush pending events pour éviter d'accumuler
+    while read -t 0.01 -r _; do :; done
+    
+    windows=$(xdotool search --all --pid $PID --onlyvisible)
     count=0
     for window in $windows ; do
-      count=$(( count + 1 ))
+        count=$(( count + 1 ))
     done
+    
     if [ "$count" -gt "1" ]; then
         echo "more than one window"
         for window in $windows ; do
@@ -16,22 +23,21 @@ windows=$(xdotool search --all --pid $PID --onlyvisible)
                 echo "file chooser detected"
                 xdotool windowfocus $window
                 xdotool key KP_Enter
-                xdotool sleep 0.5
-                xprop -id $window WM_WINDOW_ROLE >/dev/null 2>&1
-                if [ "$?" -eq "1" ]; then
-                    echo "download file"
-                    qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/
-                else
-                    xdotool sleep 0.7
-                    xprop -id $window WM_WINDOW_ROLE >/dev/null 2>&1
-                    if [ "$?" -eq "1" ]; then
-                        echo "download file"
-                        qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/
-                    fi
-                fi
-                
+                needtoexport=$window
             fi
         done    
     fi
-    xdotool sleep 0.6   
+    
+    if [ "$needtoexport" -ne "0" ]; then
+                xprop -id $needtoexport >/dev/null 2>&1
+                if [ "$?" -eq "1" ]; then
+                    export needtoexport=0
+                    echo "download file" 
+                    lock=$(cat /home/phablet/.cache/signalut.pparent/exportlock)
+                    if [ "$lock" != "lock" ]; then
+                        echo "lock" > /home/phablet/.cache/signalut.pparent/exportlock
+                       ( qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/; echo "" >/home/phablet/.cache/signalut.pparent/exportlock)  &
+                    fi
+                fi
+    fi
 done
