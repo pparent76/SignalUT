@@ -10,7 +10,7 @@
             "desktop":  "signalut.desktop"
         }
     },
-    "version": "7.79.0-1",
+    "version": "7.81.0-1",
     "maintainer": "Pierre Parent <pro@pierre-parent.fr>",
     "framework" : "ubuntu-touch-24.04-1.x"
 }
