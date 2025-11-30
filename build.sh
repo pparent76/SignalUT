@@ -212,7 +212,6 @@ mkdir -p "$INSTALL_DIR/opt/Signal"
 cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$INSTALL_DIR/opt/Signal/" || true
 
 echo "Copying maliit-input-context..."
-cp ${ROOT}/patches/maliit-inputcontext-gtk/immodules.cache $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
 cp $WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
 
 echo "Copying logos..."
@@ -228,7 +227,7 @@ cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
 echo "Copying utils..."
 mkdir -p "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/mkdir-cache.sh "$INSTALL_DIR/utils/"
+cp ${ROOT}/utils/mkdir.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/filedialog-deamon.sh "$INSTALL_DIR/utils/"
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
@@ -241,7 +240,7 @@ cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $INSTALL_DIR/u
 
 echo "Make binaries executable..."
 chmod +x $INSTALL_DIR/utils/sleep.sh
-chmod +x $INSTALL_DIR/utils/mkdir-cache.sh
+chmod +x $INSTALL_DIR/utils/mkdir.sh
 chmod +x $INSTALL_DIR/utils/get-scale.sh
 chmod +x $INSTALL_DIR/utils/filedialog-deamon.sh
 chmod +x $INSTALL_DIR/launcher.sh

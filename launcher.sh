@@ -1,14 +1,17 @@
-#!/bin/sh
+# #!/bin/sh
 
 export GDK_SCALE=2  
 export GTK_IM_MODULE=Maliit 
-export GTK_IM_MODULE_FILE=$PWD/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/immodules.cache 
+export GTK_IM_MODULE_FILE=/home/phablet/.config/signalut.pparent/immodules.cache 
 export GDK_BACKEND=x11 
 export DISABLE_WAYLAND=1 
 export DCONF_PROFILE=/nonexistent
 export XDG_CONFIG_HOME=/home/phablet/.config/signalut.pparent/
-
 export LD_LIBRARY_PATH=$PWD/lib/aarch64-linux-gnu/
+
+utils/mkdir.sh /home/phablet/.config/signalut.pparent/
+echo "\"$PWD/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/im-maliit.so\""  > /home/phablet/.config/signalut.pparent/immodules.cache 
+echo  "\"Maliit\" \"Maliit Input Method\" \"maliit\" \"\" \"en:ja:ko:zh:*\""  >> /home/phablet/.config/signalut.pparent/immodules.cache 
 
 if [ "$DISPLAY" = "" ]; then
     i=0
@@ -33,6 +36,6 @@ gpuoptions="--use-gl=egl --enable-gpu-rasterization --enable-zero-copy --ignore-
 ( utils/filedialog-deamon.sh $$ )&
 
 initpwd=$PWD
-utils/mkdir-cache.sh
+utils/mkdir.sh /home/phablet/.cache/signalut.pparent/downloads/
 cd /home/phablet/.cache/signalut.pparent/downloads/
 exec $initpwd/opt/Signal/signal-desktop $dpioptions $sandboxoptions $gpuoptions
