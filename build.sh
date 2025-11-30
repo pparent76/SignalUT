@@ -156,7 +156,7 @@ DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-in
 
 
 
-WORKDIR_MALIIT="${PKGNAME}-${VERSION}"
+WORKDIR_MALIIT="${BUILD_DIR}/${PKGNAME}-${VERSION}"
 rm -rvf $WORKDIR_MALIIT/ || true
 mkdir -p "$WORKDIR_MALIIT"
 cd "$WORKDIR_MALIIT"
@@ -213,7 +213,7 @@ cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$INSTALL_DIR/o
 
 echo "Copying maliit-input-context..."
 cp ${ROOT}/patches/maliit-inputcontext-gtk/immodules.cache $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
-cp ${BUILD_DIR}/$WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
+cp $WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
 
 echo "Copying logos..."
 cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/"

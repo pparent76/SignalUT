@@ -33,10 +33,11 @@ xev -root  | while read -r _; do
                 if [ "$?" -eq "1" ]; then
                     export needtoexport=0
                     echo "download file" 
-                    lock=$(cat /home/phablet/.cache/signalut.pparent/exportlock)
+                     read lock < /home/phablet/.cache/signalut.pparent/exportlock
                     if [ "$lock" != "lock" ]; then
                         echo "lock" > /home/phablet/.cache/signalut.pparent/exportlock
                        ( qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/; echo "" >/home/phablet/.cache/signalut.pparent/exportlock)  &
+                       xdotool sleep 5;
                     fi
                 fi
     fi
