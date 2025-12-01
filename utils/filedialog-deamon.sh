@@ -22,7 +22,7 @@ xev -root  | while read -r _; do
             if [ "$prop" = 'WM_WINDOW_ROLE(STRING) = "GtkFileChooserDialog"' ]; then
                 echo "file chooser detected"
                 xdotool windowfocus $window
-                xdotool key KP_Enter
+                xdotool key --window $window KP_Enter
                 needtoexport=$window
             fi
         done    
