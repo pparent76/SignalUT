@@ -133,7 +133,7 @@ cmake --build .
 echo "[7/10] Install dependencies..."
 
 cd ${BUILD_DIR}
-DEPENDENCIES="libhybris-utils xdotool libmaliit-glib2 libxdo3 x11-utils"
+DEPENDENCIES="libhybris-utils xdotool libmaliit-glib2 libxdo3 x11-utils pulseaudio-utils"
 
 for dep in $DEPENDENCIES ; do
     apt download $dep:arm64
@@ -206,6 +206,7 @@ cp *_extract_chsdjksd/usr/bin/xdotool "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/getprop "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/xprop "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/xev "$INSTALL_DIR/bin/"
+cp *_extract_chsdjksd/usr/bin/parec "$INSTALL_DIR/bin/"
 
 echo "Copying signal-desktop..."
 mkdir -p "$INSTALL_DIR/opt/Signal"
@@ -237,6 +238,8 @@ mkdir -p $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
 
+cp -r ${ROOT}/utils/mic-permission-requester "$INSTALL_DIR/utils/"
+cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/utils/mic-permission-requester/"
 
 echo "Make binaries executable..."
 chmod +x $INSTALL_DIR/utils/sleep.sh

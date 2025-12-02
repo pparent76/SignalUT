@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PID=$1
 needtoexport=0;

@@ -1,4 +1,4 @@
-# #!/bin/sh
+#!/bin/bash
 
 export GDK_SCALE=2  
 export GTK_IM_MODULE=Maliit 
@@ -24,6 +24,35 @@ if [ "$DISPLAY" = "" ]; then
 fi
 
 export PATH=$PWD/bin:$PATH
+utils/mkdir.sh /home/phablet/.cache/signalut.pparent/
+
+#Read micstate in conf
+while read p; do
+  if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
+done <  /home/phablet/.config/signalut.pparent/signal.ut/signal.ut.conf 
+
+res=$( ( parec | read  test ) 2>&1 )
+if [[ "$res" != *"Broken pipe"* ]]; then
+    if [[ "$micstate" != *"micState=1"* ]]; then
+        qmlscene utils/mic-permission-requester/Main.qml &
+        xdotool sleep 5;
+        while true; do
+            xdotool sleep 1;
+            res=$( ( parec | read  test ) 2>&1 )
+            if [[ "$res" == *"Broken pipe"* ]]; then
+                break;
+            fi
+            while read p; do
+                if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
+            done <  /home/phablet/.config/signalut.pparent/signal.ut/signal.ut.conf 
+            echo "$micstate"
+            if  [ "$micstate" == "micState=1" ]||  [ "$micstate" == "micState=2" ]; then
+                break;
+            fi
+        done
+    fi
+fi
+
 
 scale=$(./utils/get-scale.sh 2>/dev/null )
 
