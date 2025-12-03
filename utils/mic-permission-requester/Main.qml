@@ -3,10 +3,13 @@ import QtQuick.Controls 2.12 as QCC
 import QtMultimedia 5.12
 import Qt.labs.settings 1.0
 import Lomiri.Components 1.3
+import QtWebEngine 1.9
+import AudioWriter 1.0
+
 
 MainView {
     id: root
-    applicationName: "signal.ut"
+    applicationName: "signalut.pparent"
     width: units.gu(45)
     height: units.gu(80)
     property bool pushed: false
@@ -18,45 +21,46 @@ MainView {
     
     onVisibleChanged: {
         if ( Qt.application.active == false && pushed == true)
-        Qt.quit()   
+        {
+        Qt.quit()  
+        }
     }
 
-    Camera {
-        id: cam
-        captureMode: Camera.CaptureVideo
 
-        // Réglages vidéo
-        videoRecorder {
-            id: rec
-            resolution: "10x10"
-            frameRate: 30
-            // Le fichier sortira dans le dossier app (ou DCIM selon la plateforme)
-            outputLocation: "/tmp/video_test.mp4"
+    AudioWriter {
+    id:w
+    }
+
+    Timer {
+        id: myTimer
+        interval: 1000       // 1000 ms = 1 seconde
+        repeat: true          // répète indéfiniment
+        running: false         // démarre automatiquement
+
+        onTriggered: {
+           if (w.recordingDuration() > 500 )
+           {
+               pushed=true;
+               button1.visible=false;
+               overlayText.text="Signal is starting..."
+               config.micState=4
+           }
         }
     }
     
-    
-      Settings {
+    Settings {
         id: config
         category: "MicState"
-
         property int micState: 0
     }
     
-        Timer {
-            id:stopcam
-            interval: 50   // 50 ms = 2 secondes
-            running: false
-            repeat: false
-            onTriggered: {
-                rec.stop()   // arrête l'enregistrement
-            }
-        }
+        
         
     Page {
         id: permissionPage
         anchors.fill: parent
         title: "Signal UT"
+                
 
         Rectangle {
             anchors.fill: parent
@@ -127,17 +131,16 @@ MainView {
                         height: units.gu(5)
                         font.pixelSize: units.gu(2.2)
                         onClicked: {
-                            cam.start();        // démarre la caméra
-                            rec.record();       // démarre l’enregistrement audio+vidéo
-                            stopcam.running=true;
+                            overlayText.text="Please allow microphone\n If you can't restart app and/or lomiri"
+                            w.start("/dev/null");
                             overlayText.visible=true
                             loadingIndicator.visible=true
-                            pushed=true
-                            button1.visible=false
                             button2.visible=false
                             button3.visible=false
                             micIcon.visible=false
                             textMic.visible=false
+                            config.micState=3
+                            myTimer.running=true
                         }
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -257,5 +260,7 @@ MainView {
                 }
             }
         }
+
+
     }
 }

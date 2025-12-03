@@ -29,29 +29,27 @@ utils/mkdir.sh /home/phablet/.cache/signalut.pparent/
 #Read micstate in conf
 while read p; do
   if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
-done <  /home/phablet/.config/signalut.pparent/signal.ut/signal.ut.conf 
+done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
 
-res=$( ( parec | read  test ) 2>&1 )
-if [[ "$res" != *"Broken pipe"* ]]; then
-    if [[ "$micstate" != *"micState=1"* ]]; then
-        qmlscene utils/mic-permission-requester/Main.qml &
+
+    if [[ "$micstate" != *"micState=1"* ]]&& [[ "$micstate" != *"micState=4"* ]]; then
+        xdotool sleep 2;
+        qmlscene utils/mic-permission-requester/Main.qml -I utils/mic-permission-requester/ &
         xdotool sleep 5;
         while true; do
             xdotool sleep 1;
-            res=$( ( parec | read  test ) 2>&1 )
-            if [[ "$res" == *"Broken pipe"* ]]; then
-                break;
-            fi
             while read p; do
                 if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
-            done <  /home/phablet/.config/signalut.pparent/signal.ut/signal.ut.conf 
+            done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
             echo "$micstate"
             if  [ "$micstate" == "micState=1" ]||  [ "$micstate" == "micState=2" ]; then
                 break;
             fi
+            if  [ "$micstate" == "micState=4" ]; then
+                    break;
+            fi
         done
     fi
-fi
 
 
 scale=$(./utils/get-scale.sh 2>/dev/null )

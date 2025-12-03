@@ -115,12 +115,20 @@ cmake ..
 make
 
 # ===================================
-# STEP 5: BUILD download-helper
+# STEP 5: BUILD QML modules
 # ===================================
-echo "[6/10] Building download-helper ..."
+echo "[6/10] Building QML modules ..."
 rm -rvf ${BUILD_DIR}/download-helper
 cp -r ${ROOT}/utils/download-helper/ ${BUILD_DIR}/download-helper
 cd ${BUILD_DIR}/download-helper/qml-download-helper-module/
+mkdir build
+cd build
+cmake ..
+cmake --build .
+
+rm -rvf ${BUILD_DIR}/mic-permission-requester/
+cp -r ${ROOT}/utils/mic-permission-requester/ ${BUILD_DIR}/mic-permission-requester
+cd ${BUILD_DIR}/mic-permission-requester/AudioModule/
 mkdir build
 cd build
 cmake ..
@@ -133,7 +141,7 @@ cmake --build .
 echo "[7/10] Install dependencies..."
 
 cd ${BUILD_DIR}
-DEPENDENCIES="libhybris-utils xdotool libmaliit-glib2 libxdo3 x11-utils pulseaudio-utils"
+DEPENDENCIES="libhybris-utils xdotool libmaliit-glib2 libxdo3 x11-utils"
 
 for dep in $DEPENDENCIES ; do
     apt download $dep:arm64
@@ -206,7 +214,6 @@ cp *_extract_chsdjksd/usr/bin/xdotool "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/getprop "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/xprop "$INSTALL_DIR/bin/"
 cp *_extract_chsdjksd/usr/bin/xev "$INSTALL_DIR/bin/"
-cp *_extract_chsdjksd/usr/bin/parec "$INSTALL_DIR/bin/"
 
 echo "Copying signal-desktop..."
 mkdir -p "$INSTALL_DIR/opt/Signal"
@@ -237,6 +244,10 @@ cp -r ${BUILD_DIR}/download-helper/qml $INSTALL_DIR/utils/download-helper/
 mkdir -p $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
+
+mkdir -p $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/ || true
+cp ${BUILD_DIR}/mic-permission-requester/AudioModule/libaudiowriter.so $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/
+cp ${BUILD_DIR}/mic-permission-requester/AudioModule/qmldir $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/
 
 cp -r ${ROOT}/utils/mic-permission-requester "$INSTALL_DIR/utils/"
 cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/utils/mic-permission-requester/"
