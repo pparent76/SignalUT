@@ -18,12 +18,17 @@ import QtQuick 2.9
 import Ubuntu.Components 1.3
 import Ubuntu.Content 1.3
 import Pparent.DownloadHelper 1.0
+import Ubuntu.Components.Themes.SuruDark 1.1
 
-    
 MainView {
-    id: picker
     property var appID: "signalut.pparent";
     property var hook: "signalut";  
+    
+Page{
+    
+    theme.name: "Ubuntu.Components.Themes.SuruDark"
+    
+    id: picker
     property var activeTransfer
     property var handler
     property var contentType
@@ -31,6 +36,9 @@ MainView {
     signal cancel()
     signal imported(string fileUrl)
 
+    StyleHints {
+        colorScheme: UbuntuColorScheme.Dark
+    }
     DownloadHelper {
         id: downloadHelper
         blob_path: "/home/phablet/.cache/signalut.pparent/downloads/"
@@ -43,11 +51,19 @@ MainView {
         repeat: false
         onTriggered: Qt.quit()
     }
-    
-    Page{
-        
     header:PageHeader {
         title: i18n.tr("Export file")
+        // on remplace le bouton back par une action custom
+        leadingActionBar.actions: [
+                Action {
+                        iconName: "back"
+                        text: "Back"
+                        onTriggered: {
+                           Qt.quit()
+                        }
+                }
+        ]
+        
     }
     ContentPeerPicker {
         anchors {
@@ -88,7 +104,6 @@ MainView {
 
     Component {
         id: resultComponent
-
         ContentItem {}
     }
     }
