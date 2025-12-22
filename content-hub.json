@@ -1,0 +1,14 @@
+{
+    "source": [
+        "pictures",
+        "documents",
+        "videos",
+        "contacts"
+    ],
+    "destination": [
+      "pictures",
+      "documents",
+      "videos",
+      "contacts"
+    ]
+}

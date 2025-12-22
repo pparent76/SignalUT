@@ -7,11 +7,15 @@ export GDK_BACKEND=x11
 export DISABLE_WAYLAND=1 
 export DCONF_PROFILE=/nonexistent
 export XDG_CONFIG_HOME=/home/phablet/.config/signalut.pparent/
+export XDG_DATA_HOME=/home/phablet/.local/share/signalut.pparent/
+export XDG_DESKTOP_DIR=/home/phablet/.config/signalut.pparent/
 export LD_LIBRARY_PATH=$PWD/lib/aarch64-linux-gnu/
 
 utils/mkdir.sh /home/phablet/.config/signalut.pparent/
 echo "\"$PWD/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/im-maliit.so\""  > /home/phablet/.config/signalut.pparent/immodules.cache 
 echo  "\"Maliit\" \"Maliit Input Method\" \"maliit\" \"\" \"en:ja:ko:zh:*\""  >> /home/phablet/.config/signalut.pparent/immodules.cache 
+
+echo 'XDG_DESKTOP_DIR="/home/phablet/.cache/signalut.pparent/downloads/"'> /home/phablet/.config/signalut.pparent/user-dirs.dirs
 
 if [ "$DISPLAY" = "" ]; then
     i=0

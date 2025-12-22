@@ -22,7 +22,7 @@ if [ ! -e "Signal-Desktop" ]; then
 fi
 cd ${BUILD_DIR}/Signal-Desktop
 git pull
-git checkout 7.81.x
+git checkout 7.83.x
 
 # ========================
 # STEP 2: APPLY PATCHES
@@ -121,6 +121,14 @@ echo "[6/10] Building QML modules ..."
 rm -rvf ${BUILD_DIR}/download-helper
 cp -r ${ROOT}/utils/download-helper/ ${BUILD_DIR}/download-helper
 cd ${BUILD_DIR}/download-helper/qml-download-helper-module/
+mkdir build
+cd build
+cmake ..
+cmake --build .
+
+rm -rvf ${BUILD_DIR}/upload-helper
+cp -r ${ROOT}/utils/upload-helper/ ${BUILD_DIR}/upload-helper
+cd ${BUILD_DIR}/upload-helper/qml-upload-helper-module/
 mkdir build
 cd build
 cmake ..
@@ -229,6 +237,7 @@ cp ${BUILD_DIR}/icon-splash.png "$INSTALL_DIR/"
 echo "Copying app files..."
 cp ${ROOT}/signalut.desktop "$INSTALL_DIR/"
 cp ${ROOT}/manifest.json "$INSTALL_DIR/"
+cp ${ROOT}/content-hub.json "$INSTALL_DIR/"
 cp ${ROOT}/signalut.apparmor "$INSTALL_DIR/"
 cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
 
@@ -241,9 +250,17 @@ cp ${ROOT}/utils/filedialog-deamon.sh "$INSTALL_DIR/utils/"
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
 mkdir $INSTALL_DIR/utils/download-helper/
 cp -r ${BUILD_DIR}/download-helper/qml $INSTALL_DIR/utils/download-helper/
+
 mkdir -p $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
+
+mkdir $INSTALL_DIR/utils/upload-helper/
+cp -r ${BUILD_DIR}/upload-helper/qml $INSTALL_DIR/utils/upload-helper/
+mkdir -p $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper
+cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/build/libUploadHelperPlugin.so $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper/
+cp ${BUILD_DIR}/upload-helper/qml-upload-helper-module/qmldir $INSTALL_DIR/utils/upload-helper/Pparent/UploadHelper/
+
 
 mkdir -p $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/ || true
 cp ${BUILD_DIR}/mic-permission-requester/AudioModule/libaudiowriter.so $INSTALL_DIR/utils/mic-permission-requester/AudioWriter/

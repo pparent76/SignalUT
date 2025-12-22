@@ -7,10 +7,11 @@
     "hooks": {
         "signallauncher": {
             "apparmor": "signalut.apparmor",
-            "desktop":  "signalut.desktop"
+            "desktop":  "signalut.desktop",
+            "content-hub": "content-hub.json"
         }
     },
-    "version": "7.81.0-1",
+    "version": "7.83.0-1",
     "maintainer": "Pierre Parent <pro@pierre-parent.fr>",
     "framework" : "ubuntu-touch-24.04-1.x"
 }
