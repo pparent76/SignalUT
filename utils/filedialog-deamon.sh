@@ -3,6 +3,7 @@
 PID=$1
 needtoexport=0;
 echo "" > /home/phablet/.cache/signalut.pparent/exportlock
+rm /home/phablet/.local/share/signalut.pparent/recently-used.xbel
 rm -rvf /home/phablet/.cache/signalut.pparent/downloads/*
 allreadynavigated=0
 
@@ -39,8 +40,6 @@ xev -root  | while read -r _; do
                     while read -t 0.01 -r _; do :; done
                     xdotool windowfocus $window
                     xdotool sleep 0.1
-                    xdotool key  --window $window KP_Enter
-                    xdotool sleep 0.1
                     xdotool key  --window $window Alt+d
                     xdotool sleep 0.5
                     xdotool key  --window $window F6
@@ -55,6 +54,7 @@ xev -root  | while read -r _; do
                     xdotool sleep 5
                     while read -t 0.01 -r _; do :; done
                     echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png
+                    rm /home/phablet/.local/share/signalut.pparent/recently-used.xbel
                 fi
             fi
         done    
@@ -71,6 +71,7 @@ xev -root  | while read -r _; do
                        ( qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/; echo "" >/home/phablet/.cache/signalut.pparent/exportlock)  &
                        xdotool sleep 5;
                        echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png
+                       rm /home/phablet/.local/share/signalut.pparent/recently-used.xbel
                     fi
                 fi
     fi
