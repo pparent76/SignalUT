@@ -55,6 +55,13 @@ done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent
         done
     fi
 
+    
+utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
+
+for file in /home/phablet/.cache/signalut.pparent/downloads/* ; do
+    utils/rm.sh $file
+done
+
 
 scale=$(./utils/get-scale.sh 2>/dev/null )
 

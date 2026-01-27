@@ -22,7 +22,7 @@ if [ ! -e "Signal-Desktop" ]; then
 fi
 cd ${BUILD_DIR}/Signal-Desktop
 git pull
-git checkout 7.83.x
+git checkout 7.86.x
 
 # ========================
 # STEP 2: APPLY PATCHES
@@ -160,22 +160,57 @@ for dep in $DEPENDENCIES ; do
 done
 
 # =================================================
-# STEP 7: Downloading maliit-inputcontext-gtk3
+# STEP 8: Downloading maliit-inputcontext-gtk3
 # =================================================
-echo "[8/10] Building maliit-inputcontext-gtk3 and download dependencies..."
+echo "[8/11] Building maliit-inputcontext-gtk3..."
 
+cd ${BUILD_DIR}
 
 PKGNAME="maliit-inputcontext-gtk"
-VERSION="0.99.1+git20151116.72d7576"
+VERSION_MALIIT="0.99.1+git20151116.72d7576"
 ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576.orig.tar.xz"
 DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576-3build3.debian.tar.xz"
 
 
 
-WORKDIR_MALIIT="${BUILD_DIR}/${PKGNAME}-${VERSION}"
+WORKDIR_MALIIT="${BUILD_DIR}/${PKGNAME}-${VERSION_MALIIT}"
 rm -rvf $WORKDIR_MALIIT/ || true
 mkdir -p "$WORKDIR_MALIIT"
 cd "$WORKDIR_MALIIT"
+
+echo "📦 Download sources..."
+wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz"
+wget -q "$DEBIAN_URL" -O "${PKGNAME}_${VERSION_MALIIT}.debian.tar.xz"
+
+echo "📂 Extract original code..."
+tar -xf "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz"
+SRC_DIR_MALIIT=$(tar -tf "${PKGNAME}_${VERSION_MALIIT}.orig.tar.xz" | head -1 | cut -d/ -f1)
+
+echo "📂 Extract debian files..."
+tar -xf "${PKGNAME}_${VERSION_MALIIT}.debian.tar.xz" -C "$SRC_DIR_MALIIT"
+
+echo "Apply patch..."
+cd ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/
+patch ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/gtk-input-context/client-gtk/client-imcontext-gtk.c  ${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch
+echo "${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch"
+
+echo "Compile..."
+EDITOR=true dpkg-source --commit . fix-keyboard
+DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
+
+# =================================================
+# STEP 9: Build libnotify
+# =================================================
+echo "[9/11] Building libnotify..."
+
+rm -rvf ${BUILD_DIR}/libnotify || true
+mkdir -p ${BUILD_DIR}/libnotify
+cd ${BUILD_DIR}/libnotify
+
+PKGNAME="libnotify"
+VERSION="0.8.3"
+ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1build2/libnotify_0.8.3.orig.tar.xz"
+DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1/libnotify_0.8.3-1.debian.tar.xz"
 
 echo "📦 Download sources..."
 wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION}.orig.tar.xz"
@@ -183,26 +218,23 @@ wget -q "$DEBIAN_URL" -O "${PKGNAME}_${VERSION}.debian.tar.xz"
 
 echo "📂 Extract original code..."
 tar -xf "${PKGNAME}_${VERSION}.orig.tar.xz"
-SRC_DIR_MALIIT=$(tar -tf "${PKGNAME}_${VERSION}.orig.tar.xz" | head -1 | cut -d/ -f1)
+SRC_DIR_LIBNOTIFY=$(tar -tf "${PKGNAME}_${VERSION}.orig.tar.xz" | head -1 | cut -d/ -f1)
 
 echo "📂 Extract debian files..."
-tar -xf "${PKGNAME}_${VERSION}.debian.tar.xz" -C "$SRC_DIR_MALIIT"
+tar -xf "${PKGNAME}_${VERSION}.debian.tar.xz" -C "$SRC_DIR_LIBNOTIFY"
 
 echo "Apply patch..."
-cd ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION/
-patch ${BUILD_DIR}/$SRC_DIR_MALIIT/maliit-inputcontext-gtk-$VERSION/gtk-input-context/client-gtk/client-imcontext-gtk.c  ${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch
-echo "${ROOT}/patches/maliit-inputcontext-gtk/client-imcontext-gtk.c.patch"
+cd ${BUILD_DIR}/libnotify/$SRC_DIR_LIBNOTIFY/
+patch -p1 < ${ROOT}/patches/libnotify/notification.c.diff
 
-echo "Compile..."
-EDITOR=true dpkg-source --commit . fix-keyboard
+EDITOR=true dpkg-source --commit . ut-notif
 DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
 
 
-
 # ==============================
-# STEP 8: Copying files
+# STEP 10: Copying files
 # ==============================  
-echo "[9/10] Copying files..." 
+echo "[10/11] Copying files..." 
 
 
 echo "Copying dependencies..."
@@ -228,7 +260,10 @@ mkdir -p "$INSTALL_DIR/opt/Signal"
 cp -r ${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/* "$INSTALL_DIR/opt/Signal/" || true
 
 echo "Copying maliit-input-context..."
-cp $WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
+cp $WORKDIR_MALIIT/maliit-inputcontext-gtk-$VERSION_MALIIT/builddir/gtk3/gtk-3.0/im-maliit.so $INSTALL_DIR/lib/aarch64-linux-gnu/gtk-3.0/3.0.0/immodules/
+
+echo "Copying libnotify"
+cp ${BUILD_DIR}/libnotify/libnotify-0.8.3/obj-aarch64-linux-gnu/libnotify/* $INSTALL_DIR/lib/aarch64-linux-gnu/ || true
 
 echo "Copying logos..."
 cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/"
@@ -240,9 +275,14 @@ cp ${ROOT}/manifest.json "$INSTALL_DIR/"
 cp ${ROOT}/content-hub.json "$INSTALL_DIR/"
 cp ${ROOT}/signalut.apparmor "$INSTALL_DIR/"
 cp ${ROOT}/launcher.sh "$INSTALL_DIR/"
+cp ${ROOT}/pushexec "$INSTALL_DIR/"
+cp ${ROOT}/push-apparmor.json "$INSTALL_DIR/"
+cp ${ROOT}/signalut-push.apparmor "$INSTALL_DIR/"
+cp ${ROOT}/signalut-push-helper.json "$INSTALL_DIR/"
 
 echo "Copying utils..."
 mkdir -p "$INSTALL_DIR/utils/"
+cp ${ROOT}/utils/rm.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/mkdir.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
@@ -270,19 +310,21 @@ cp -r ${ROOT}/utils/mic-permission-requester "$INSTALL_DIR/utils/"
 cp ${BUILD_DIR}/icon.png "$INSTALL_DIR/utils/mic-permission-requester/"
 
 echo "Make binaries executable..."
+chmod +x $INSTALL_DIR/utils/rm.sh
 chmod +x $INSTALL_DIR/utils/sleep.sh
 chmod +x $INSTALL_DIR/utils/mkdir.sh
 chmod +x $INSTALL_DIR/utils/get-scale.sh
 chmod +x $INSTALL_DIR/utils/filedialog-deamon.sh
 chmod +x $INSTALL_DIR/launcher.sh
+chmod +x $INSTALL_DIR/pushexec
 chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
 chmod +x $INSTALL_DIR/opt/Signal/chrome_crashpad_handler
 
 
 # ========================
-# STEP 9: BUILD THE CLICK PACKAGE
+# STEP 11: BUILD THE CLICK PACKAGE
 # ========================
-echo "[10/10] Building click package..."
+echo "[11/11] Building click package..."
 # click build "$INSTALL_DIR"
 
 echo "✅ Preparation done, building the .click package."
