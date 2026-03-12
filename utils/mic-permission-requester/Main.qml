@@ -65,7 +65,7 @@ MainView {
 
         Rectangle {
             anchors.fill: parent
-            color: "3640fd"
+            color: "#3640fd"
 
             Column {
                 id: content
