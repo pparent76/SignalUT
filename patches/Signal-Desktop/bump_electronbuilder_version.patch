@@ -1,11 +1,11 @@
 diff --git a/package.json b/package.json
-index 0773eacf9..87f38a231 100644
+index 633ec1e10..9aff3d312 100644
 --- a/package.json
 +++ b/package.json
-@@ -313,7 +313,7 @@
+@@ -311,7 +311,7 @@
      "danger": "12.3.3",
      "debug": "4.3.7",
-     "electron": "39.2.7",
+     "electron": "40.4.1",
 -    "electron-builder": "26.0.14",
 +    "electron-builder": "26.0.18",
      "electron-mocha": "13.0.1",

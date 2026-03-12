@@ -32,29 +32,35 @@ utils/mkdir.sh /home/phablet/.cache/signalut.pparent/
 
 #Read micstate in conf
 while read p; do
-  if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
+  if [[ "$p" == *"microState="* ]]; then  micstate=$p; fi
+  if [[ "$p" == *"keyboardHeight="* ]]; then   keyboardHeight="${p#keyboardHeight=}" ; fi
 done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
 
 
-    if [[ "$micstate" != *"micState=1"* ]]&& [[ "$micstate" != *"micState=4"* ]]; then
+if { [[ "$micstate" != *"microState=1"* ]] && [[ "$micstate" != *"microState=4"* ]]; } || \
+   { [[ "$keyboardHeight" = "" ]] || [[ "$keyboardHeight" -lt "100" ]] || [[ "$keyboardHeight" -gt "4000" ]]; }; then
         xdotool sleep 2;
         qmlscene utils/mic-permission-requester/Main.qml -I utils/mic-permission-requester/ &
         xdotool sleep 5;
         while true; do
             xdotool sleep 1;
             while read p; do
-                if [[ "$p" == *"micState="* ]]; then  micstate=$p; fi
+                if [[ "$p" == *"microState="* ]]; then  micstate=$p; fi
             done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
             echo "$micstate"
-            if  [ "$micstate" == "micState=1" ]||  [ "$micstate" == "micState=2" ]; then
+            if  [ "$micstate" == "microState=1" ]||  [ "$micstate" == "microState=2" ]; then
                 break;
             fi
-            if  [ "$micstate" == "micState=4" ]; then
+            if  [ "$micstate" == "microState=4" ]; then
                     break;
             fi
         done
-    fi
+fi
 
+#Read micstate in conf
+while read p; do
+  if [[ "$p" == *"keyboardHeight="* ]]; then keyboardHeight="${p#keyboardHeight=}" ; fi
+done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
     
 utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
 
@@ -65,7 +71,7 @@ done
 
 scale=$(./utils/get-scale.sh 2>/dev/null )
 
-dpioptions="--high-dpi-support=1 --force-device-scale-factor=$scale --grid-unit-px=$GRID_UNIT_PX"
+dpioptions="--high-dpi-support=1 --force-device-scale-factor=$scale --keyboard-height=$keyboardHeight"
 sandboxoptions="--no-sandbox"
 gpuoptions="--use-gl=egl --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-features=UseSkiaRenderer,VaapiVideoDecoder --disable-frame-rate-limit --disable-gpu-vsync --enable-oop-rasterization"
 

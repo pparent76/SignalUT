@@ -22,7 +22,7 @@ if [ ! -e "Signal-Desktop" ]; then
 fi
 cd ${BUILD_DIR}/Signal-Desktop
 git pull
-git checkout 7.86.x
+git checkout 8.2.x
 
 # ========================
 # STEP 2: APPLY PATCHES

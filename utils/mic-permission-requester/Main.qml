@@ -15,7 +15,7 @@ MainView {
     property bool pushed: false
     
     Component.onCompleted: {
-        config.micState=0
+        config.microState=0
     }
     visible: Qt.application.active
     
@@ -43,7 +43,7 @@ MainView {
                pushed=true;
                button1.visible=false;
                overlayText.text="Signal is starting..."
-               config.micState=4
+               config.microState=4
            }
         }
     }
@@ -51,7 +51,8 @@ MainView {
     Settings {
         id: config
         category: "MicState"
-        property int micState: 0
+        property int microState: 0
+        property int keyboardHeight: 0
     }
     
         
@@ -64,48 +65,95 @@ MainView {
 
         Rectangle {
             anchors.fill: parent
-            color: "#3640fd"
+            color: "3640fd"
 
             Column {
                 id: content
-                spacing: units.gu(4)
+                spacing: units.gu(2)
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     top: parent.top
                     topMargin: units.gu(6)
                 }
 
-                // --- Logo app ---
+         
+
+                    Item {
+                        id: focusStealer
+                        visible: false
+                    }
+                // --- Titre ---
+                QCC.TextField {
+                    id: titleField
+
+                    text: "Welcome to Signal UT!"
+                    font.bold: true
+                    font.pixelSize: units.gu(3)
+                    color: "white"
+
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    selectByMouse: true
+                    cursorVisible: activeFocus
+
+                    // Supprime totalement l'aspect "input"
+                    background: Rectangle {
+                        color: "transparent"
+                        border.width: 0
+                    }
+                    
+                    
+                    Component.onCompleted: {
+                        forceActiveFocus()
+                        blurTimer.start()
+                    }
+
+                    Timer {
+                        id: blurTimer
+                        interval: 500   
+                        repeat: false
+
+                        onTriggered: {
+                            config.keyboardHeight= UbuntuApplication.inputMethod.visible ?UbuntuApplication.inputMethod.keyboardRectangle.height: 0
+                            focusStealer.forceActiveFocus()
+                        }
+                    }
+                }
+
+                Row
+                {
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: units.gu(15)
+                width: units.gu(28)
+                spacing: units.gu(2)
+                       // --- Logo app ---
                 Image {
                     id: appLogo
                     source: "icon.png"
-                    width: units.gu(20)
-                    height: units.gu(20)
+                    width: units.gu(15)
+                    height: units.gu(15)
                     fillMode: Image.PreserveAspectFit
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                // --- Titre ---
-                Label {
-                    text: "Welcome to Signal UT!"
-                    fontSize: "large"
-                    font.bold: true
-                    color: "white"
-                    font.pixelSize: units.gu(3.5)
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                // --- Icône Micro ---
-                Image {
-                    id: micIcon
-                    source: "mic.png"
-                    width: units.gu(7)
-                    height: units.gu(7)
-                    fillMode: Image.PreserveAspectFit
-                    anchors.horizontalCenter: parent.horizontalCenter
                 }
                 
+                Rectangle {
+                    width: units.gu(15)
+                    height: units.gu(15)
+                    color: "transparent"
+
+                        // --- Icône Micro ---
+                                Image {
+                                    id: micIcon
+                                    source: "mic.png"
+                                    width: units.gu(7)
+                                    height: units.gu(7)
+                                    anchors.top: parent.top
+                                    anchors.topMargin: units.gu(4)
+                                    fillMode: Image.PreserveAspectFit
+                                }
+                }
+      
+                }
                 // --- Question ---
                 Label {
                     id: textMic
@@ -137,9 +185,8 @@ MainView {
                             loadingIndicator.visible=true
                             button2.visible=false
                             button3.visible=false
-                            micIcon.visible=false
                             textMic.visible=false
-                            config.micState=3
+                            config.microState=3
                             myTimer.running=true
                         }
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -153,14 +200,13 @@ MainView {
                         height: units.gu(5)
                         font.pixelSize: units.gu(2.2)
                         onClicked: {
-                            config.micState=2
+                            config.microState=2
                             overlayText.visible=true
                             loadingIndicator.visible=true
                             pushed=true
                             button1.visible=false
                             button2.visible=false
                             button3.visible=false
-                            micIcon.visible=false
                             textMic.visible=false
                         }
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -174,17 +220,17 @@ MainView {
                         height: units.gu(5)
                         font.pixelSize: units.gu(2.2)
                         onClicked: {
-                            config.micState=1
+                            config.microState=1
                             overlayText.visible=true
                             loadingIndicator.visible=true
                             pushed=true
                             button1.visible=false
                             button2.visible=false
                             button3.visible=false   
-                            micIcon.visible=false
                             textMic.visible=false
                         }
                         anchors.horizontalCenter: parent.horizontalCenter
+                        
                     }
                     
                             // 2°) Indicateur circulaire

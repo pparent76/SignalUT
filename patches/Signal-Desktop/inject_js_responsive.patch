@@ -13,8 +13,8 @@ index a5e0a20ef..51014a823 100644
 +      const { app } = require('electron');
 +
 +      const params = {
-+        gridUnitPx: app.commandLine.getSwitchValue('grid-unit-px'),
 +        forceScale: app.commandLine.getSwitchValue('force-device-scale-factor'),
++        keyboardHeight: app.commandLine.getSwitchValue('keyboard-height')
 +      };
 +
 +      const secondaryPath = join(__dirname, 'responsive.js');

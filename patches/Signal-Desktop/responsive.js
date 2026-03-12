@@ -40,23 +40,6 @@ const X = {
    buttonTogleLeftMenuHelper: () => document.querySelector('.NavTabs__ItemLabel')
 };
 
-var tabletWordribbonHeight = 6; // gu
-var phoneWordribbonHeight = 4; // gu
-
-var phoneKeyboardHeightPortrait = 40; // percent of screen
-var phoneKeyboardHeightLandscape = 57; // percent of screen
-
-var tabletKeyboardHeightPortrait = 31; // percent of screen
-var tabletKeyboardHeightLandscape = 47; // percent of scree
-
-var keyboardMargin = 12; //px
-
-function guToPx(gu) {
-  const GRID_UNIT_PX=parseFloat(window.__cmdParams.gridUnitPx);
-  const scalingFactor=parseFloat(window.__cmdParams.forceScale);
-  //const pxPerMm = (96 / 25.4) * window.devicePixelRatio;
-  return Math.round(gu * GRID_UNIT_PX/ scalingFactor);
-}
 
     
 // Declare variables
@@ -173,9 +156,6 @@ function main(){
   //-------------------------------------------------------
   document.body.addEventListener('focusin', (event) => {
     lastFocusEl = event.target;
-    console.log("Focused on:")
-    console.log(lastFocusEl)  
-    console.log("------------------------------")
     if ( (lastFocusEl.isContentEditable || X.messageEditor().contains(lastFocusEl) ) && (!lastClickEl || ! lastClickEl.isContentEditable ) )
     {
       if (lastFocusEl.contains(X.textEditor()) || lastFocusEl.contains === X.textEditor())
@@ -188,35 +168,9 @@ function main(){
     }
     else if ( X.messageEditor().contains(lastFocusEl))
     {
-      var isTablet=false;
-      if (window.innerWidth > guToPx(90) || window.innerHeight > guToPx(90))
-         isTablet=true;
-      if (window.innerWidth > window.innerHeight)
-      {
-        if (isTablet)
-        {
-        var pixel=guToPx(tabletWordribbonHeight)+keyboardMargin;
-        X.messageEditor().style.paddingBottom=`calc(${tabletKeyboardHeightLandscape}vh + ${pixel}px)`;
-        }
-        else
-        {
-        var pixel=guToPx(phoneWordribbonHeight)+keyboardMargin;
-        X.messageEditor().style.paddingBottom=`calc(${phoneKeyboardHeightLandscape}vh + ${pixel}px)`;
-        }
-      }
-      else
-      {
-        if (isTablet)
-        {
-        var pixel=guToPx(tabletWordribbonHeight)+keyboardMargin;
-        X.messageEditor().style.paddingBottom=`calc(${tabletKeyboardHeightPortrait}vh + ${pixel}px)`;
-        }
-        else
-        {
-        var pixel=guToPx(phoneWordribbonHeight)+keyboardMargin;
-        X.messageEditor().style.paddingBottom=`calc(${phoneKeyboardHeightPortrait}vh + ${pixel}px)`;
-        }
-      }
+      var keyboardMargin = 12; //px
+      var keyboardHeight = Math.round(parseFloat(window.__cmdParams.keyboardHeight) /parseFloat(window.__cmdParams.forceScale)+keyboardMargin);
+      X.messageEditor().style.paddingBottom=`${keyboardHeight}px`;
     }
     else
       X.messageEditor().style.paddingBottom=""
