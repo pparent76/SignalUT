@@ -247,7 +247,7 @@ function main(){
 window.addEventListener("click", function() {
   //Register Last clicked element
   lastClickEl=event.target;  
-  console.log(lastClickEl);
+  //console.log(lastClickEl);
    //---------------------------------------------------------------------------------
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    // Important section: Handle navigation towards chatWindow
@@ -269,6 +269,9 @@ window.addEventListener("click", function() {
        },20);
       }
   }
+  
+    if (lastClickEl.classList.contains('module-ConversationHeader__button--search') || lastClickEl.classList.contains('module-Button--icon--search') )
+        showchatlist();
   
 }); 
 
@@ -398,15 +401,52 @@ function backupBackButton()
  if (X.chatList().style.transform== "translateX(-100%)") {
   if (  X.chatHeader() )
   {
-    if (! X.chatHeader().querySelector('#back_button') )
+    if (! X.chatHeader().querySelector('#back_button')  )
     {
     addBackButtonToChatView();  
     }
   }
-  else
+  else if ( ! X.chatWindow().querySelector(".ConversationPanel__header__back-button") )
   {
     showchatlist()
   }
 } 
 }
 
+
+//-----------------------------------------------------------------------------
+//          Avoid opening Message menu unwillingly when scrolling
+//----------------------------------------------------------------------------
+
+var allowOpeningMessageMenu=0;
+function intercept(e) {
+    const target = e.target.closest('.module-message__buttons__menu');
+
+    if (target && allowOpeningMessageMenu == 0) {
+        console.log("cursor!!!");
+        allowOpeningMessageMenu=1;
+        e.stopPropagation();
+        // ⚠️ pas de preventDefault → sinon risque de casser le click
+    }
+    allowOpeningMessageMenu=0;
+}
+
+document.addEventListener('pointerdown', intercept, true);
+
+document.addEventListener('click', function (event) {
+  
+  const target = event.target.closest('.module-message__buttons__menu');
+ 
+  if (target) {
+    console.log("click!!!");
+    allowOpeningMessageMenu=1;
+    const pointerEvent = new PointerEvent('pointerdown', {
+      bubbles: true,
+      cancelable: true,
+      pointerType: 'mouse', // ou 'touch' si besoin
+      isPrimary: true
+    });
+
+    target.dispatchEvent(pointerEvent);
+  }
+});

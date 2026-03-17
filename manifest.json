@@ -14,7 +14,7 @@
       "push-helper": "signalut-push-helper.json"
     }
   },
-  "version": "8.2.0-2",
+  "version": "8.2.1-1",
   "maintainer": "Pierre Parent <pro@pierre-parent.fr>",
   "framework": "ubuntu-touch-24.04-1.x"
 }

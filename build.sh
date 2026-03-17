@@ -16,13 +16,18 @@ INSTALL_DIR="${BUILD_DIR}/install"
 # STEP 1: CLONE SIGNAL-DESKTOP
 # ========================
 echo "[1/10] Clone Signal-Desktop github"
+
 cd ${BUILD_DIR}
+signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.2.1.tar.gz
+
 if [ ! -e "Signal-Desktop" ]; then
-    git clone https://github.com/signalapp/Signal-Desktop.git
+    mkdir -p "Signal-Desktop"
+    wget -O /tmp/signal.tar.gz "$signal_download_url"
+    tar -xzf /tmp/signal.tar.gz -C "Signal-Desktop" --strip-components=1
 fi
+
 cd ${BUILD_DIR}/Signal-Desktop
-git pull
-git checkout 8.2.x
+
 
 # ========================
 # STEP 2: APPLY PATCHES
