@@ -85,17 +85,39 @@ document.addEventListener('readystatechange', event => {
 //         First resize after loading the web 
 //    (temporary timeout only running at the begining)
 //------------------------------------------------------
-var check = 0;
-var checkExist = setInterval(function() {
-    if (X.chatList()) {
-      if ( check == 0 ) {
-        clearInterval(checkExist);
-        console.log("App fully lanched, applying responsive theme!")
+// var check = 0;
+// var checkExist = setInterval(function() {
+//     if (X.chatList()) {
+//       if ( check == 0 ) {
+//         clearInterval(checkExist);
+//         console.log("App fully lanched, applying responsive theme!")
+//         main();
+//         check = 1;
+//       }
+//     }
+// }, 100);
+
+const observer = new MutationObserver((mutationsList, obs) => {
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'childList') {
+      if (X.chatList()) {
+        // Stoppe immédiatement l'observer
+        obs.disconnect();
+
+        // Optionnel : sécurité supplémentaire si plusieurs mutations arrivent en batch
+        // pour éviter tout double appel
         main();
-        check = 1;
+        return;
       }
     }
-}, 100);
+  }
+});
+
+// Configuration du listener
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});
 
 
 const STYLE_ID = 'composition-hidden-style';
