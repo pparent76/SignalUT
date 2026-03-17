@@ -95,7 +95,7 @@ var checkExist = setInterval(function() {
         check = 1;
       }
     }
-}, 1000);
+}, 100);
 
 
 const STYLE_ID = 'composition-hidden-style';
@@ -426,7 +426,6 @@ function intercept(e) {
         console.log("cursor!!!");
         allowOpeningMessageMenu=1;
         e.stopPropagation();
-        // ⚠️ pas de preventDefault → sinon risque de casser le click
     }
     allowOpeningMessageMenu=0;
 }

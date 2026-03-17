@@ -40,7 +40,7 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     
     if [ ! -e ".bump_electronbuilder_version-applyed" ]; then
         echo "Apply bump_electronbuilder_version.patch"
-        git apply ${ROOT}/patches/Signal-Desktop/bump_electronbuilder_version.patch
+        patch -p1 < ${ROOT}/patches/Signal-Desktop/bump_electronbuilder_version.patch
         touch .bump_electronbuilder_version-applyed
     fi
     
@@ -53,7 +53,7 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     #Patch to make the app responsive
     if [ ! -e ".fix-inject-responsive.patch-applyed" ]; then
         echo "Apply fix-inject-responsive.patch"
-        git apply ${ROOT}/patches/Signal-Desktop/inject_js_responsive.patch
+        patch -p1 < ${ROOT}/patches/Signal-Desktop/inject_js_responsive.patch
         touch .fix-inject-responsive.patch-applyed
     fi
     
