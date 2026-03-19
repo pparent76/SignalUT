@@ -111,9 +111,16 @@ convert  -background none ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png 
 # ===================================
 # STEP 5: BUILD THE FAKE xdg-open
 # ===================================
-echo "[5/10] Building fake xdg-open ..."
+echo "[5/10] Building fake xdg-open & placeholder-killer ..."
 cp -r ${ROOT}/utils/xdg-open/ ${BUILD_DIR}/
 cd ${BUILD_DIR}/xdg-open/
+mkdir -p build
+cd build
+cmake ..
+make
+
+cp -r ${ROOT}/utils/placeholder-killer/ ${BUILD_DIR}/
+cd ${BUILD_DIR}/placeholder-killer/
 mkdir -p build
 cd build
 cmake ..
@@ -293,6 +300,7 @@ cp ${ROOT}/utils/mkdir.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/filedialog-deamon.sh "$INSTALL_DIR/utils/"
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
+cp ${BUILD_DIR}/placeholder-killer/build/placeholder-killer $INSTALL_DIR/bin/
 mkdir $INSTALL_DIR/utils/download-helper/
 cp -r ${BUILD_DIR}/download-helper/qml $INSTALL_DIR/utils/download-helper/
 

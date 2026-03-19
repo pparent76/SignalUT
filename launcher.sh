@@ -75,8 +75,8 @@ dpioptions="--high-dpi-support=1 --force-device-scale-factor=$scale --keyboard-h
 sandboxoptions="--no-sandbox"
 gpuoptions="--use-gl=egl --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-features=UseSkiaRenderer,VaapiVideoDecoder --disable-frame-rate-limit --disable-gpu-vsync --enable-oop-rasterization"
 
-#Open a dummy qt gui app to realease lomiri from its waiting
-( utils/sleep.sh; $PWD/bin/xdg-open )&
+#Start a dummy Qt app called "placeholder-killer" to realease lomiri from its waiting
+( utils/sleep.sh; $PWD/bin/placeholder-killer )&
 ( utils/filedialog-deamon.sh $$ )&
 
 initpwd=$PWD
