@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export QT_QPA_PLATFORM=xcb
 PID=$1
 needtoexport=0;
 echo "" > /home/phablet/.cache/signalut.pparent/exportlock
@@ -69,9 +70,8 @@ xev -root  | while read -r _; do
                      read lock < /home/phablet/.cache/signalut.pparent/exportlock
                     if [ "$lock" != "lock" ]; then
                         echo "lock" > /home/phablet/.cache/signalut.pparent/exportlock
-                       ( qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/; echo "" >/home/phablet/.cache/signalut.pparent/exportlock)  &
+                       ( qmlscene utils/download-helper/qml/ExportPage.qml -I  utils/download-helper/; echo "" >/home/phablet/.cache/signalut.pparent/exportlock; echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png )  &
                        xdotool sleep 5;
-                       echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png
                        utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
                     fi
                 fi
