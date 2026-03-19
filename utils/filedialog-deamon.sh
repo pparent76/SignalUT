@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export QT_QPA_PLATFORM=xcb
+#export QT_QPA_PLATFORM=xcb
 PID=$1
 needtoexport=0;
 echo "" > /home/phablet/.cache/signalut.pparent/exportlock
@@ -38,8 +38,11 @@ xev -root  | while read -r _; do
                     needtoexport=$window
                 else
                     echo "Import File"
-                    qmlscene utils/upload-helper/qml/ImportPage.qml -I  utils/upload-helper/;
-                    while read -t 0.01 -r _; do :; done
+                    qmlscene utils/upload-helper/qml/ImportPage.qml -I  utils/upload-helper/ &
+                    pid=$!
+                    while kill -0 "$pid" 2>/dev/null; do
+                        while read -t 0.01 -r _; do :; done
+                    done
                     xdotool windowfocus $window
                     xdotool sleep 0.1
                     xdotool key  --window $window Alt+d
