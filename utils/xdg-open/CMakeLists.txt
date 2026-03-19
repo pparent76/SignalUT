@@ -1,19 +1,24 @@
 cmake_minimum_required(VERSION 3.10)
-project(xdg_open LANGUAGES CXX)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+project(xdg_open C)
 
-# Trouver les modules Qt5
-find_package(Qt5 REQUIRED COMPONENTS Core Gui)
+# Trouver pkg-config
+find_package(PkgConfig REQUIRED)
 
-add_executable(xdg-open xdg-open.cpp)
+# Trouver gio-2.0 (inclut glib et gobject)
+pkg_check_modules(GIO REQUIRED gio-2.0)
 
-# Lier les bibliothèques Qt nécessaires
-target_link_libraries(xdg-open Qt5::Core Qt5::Gui)
+# Définir l'exécutable
+add_executable(xdg-open xdg-open.c)
 
-set_target_properties(xdg-open PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
-) 
+# Inclure les headers
+target_include_directories(xdg-open PRIVATE ${GIO_INCLUDE_DIRS})
+
+# Flags de compilation
+target_compile_options(xdg-open PRIVATE ${GIO_CFLAGS_OTHER})
+
+# Linker les libs
+target_link_libraries(xdg-open ${GIO_LIBRARIES})
+
+# Pour certains systèmes (optionnel mais safe)
+target_link_directories(xdg-open PRIVATE ${GIO_LIBRARY_DIRS})
