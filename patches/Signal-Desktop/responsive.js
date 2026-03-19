@@ -6,16 +6,11 @@
 // @License       AGPL-v3.0
 // ==/UserScript==
 
-
 const X = {
   app: () => document.querySelector("#app-container"),
   browser: () => document.getElementById('app').getElementsByClassName('browser')[0] ,
-  //MainWrapper stuff (element class two)----------------------------------------------------
   mainWrapper: () => document.querySelector('.App'),  
     unkownSection1: () => document.querySelector('.Inbox__no-conversation-open'), 
-    overlayMenus: () => document.querySelector('.two').childNodes[2],
-      uploadPannel: () => document.querySelector('.two').childNodes[2].childNodes[1], //(to upload photos/videos/document)    
-      leftSettingPannel: () => document.querySelector('.two').childNodes[2].childNodes[0], // leftMenus (Settings, status, community, profile, ...)
     chatList: () => document.querySelector('.NavSidebar'),
       chatlistHeader: () => document.querySelector('.NavSidebar__HeaderContent'),
     chatWindow: () => document.querySelector('.Inbox__conversation-stack'),
@@ -40,8 +35,6 @@ const X = {
    buttonTogleLeftMenuHelper: () => document.querySelector('.NavTabs__ItemLabel')
 };
 
-
-    
 // Declare variables
 updatenotificacion = 0;
 allownotification = 0;
@@ -55,7 +48,6 @@ var firstChatLoad=1;
 //-----------------------------------------------------
 Notification.requestPermission();
 
-
 //-----------------------------------------------------
 //            Usefull functions
 //-----------------------------------------------------
@@ -67,45 +59,19 @@ Notification.requestPermission();
       head.appendChild(newCss);
   }
   
-  
-// Listeners to startup APP
+//---------------------------------------------  
+// Listeners to startup main()
+//---------------------------------------------
 window.addEventListener("load", function(event) {
     console.log("Loaded");
     main();
 });
 
-document.addEventListener('readystatechange', event => {
-    console.log(event.target.readyState);
-    if (event.target.readyState === "complete") {
-        console.log("Completed");
-    }
-});
-
-//-----------------------------------------------------
-//         First resize after loading the web 
-//    (temporary timeout only running at the begining)
-//------------------------------------------------------
-// var check = 0;
-// var checkExist = setInterval(function() {
-//     if (X.chatList()) {
-//       if ( check == 0 ) {
-//         clearInterval(checkExist);
-//         console.log("App fully lanched, applying responsive theme!")
-//         main();
-//         check = 1;
-//       }
-//     }
-// }, 100);
-
 const observer = new MutationObserver((mutationsList, obs) => {
   for (const mutation of mutationsList) {
     if (mutation.type === 'childList') {
       if (X.chatList()) {
-        // Stoppe immédiatement l'observer
         obs.disconnect();
-
-        // Optionnel : sécurité supplémentaire si plusieurs mutations arrivent en batch
-        // pour éviter tout double appel
         main();
         return;
       }
@@ -113,7 +79,6 @@ const observer = new MutationObserver((mutationsList, obs) => {
   }
 });
 
-// Configuration du listener
 observer.observe(document.body, {
   childList: true,
   subtree: true
@@ -126,7 +91,6 @@ function addHiddenCSS() {
   if (document.getElementById(STYLE_ID)) return; // idempotent
   const style = document.createElement('style');
   style.id = STYLE_ID;
-  // !important pour garantir l'écrasement si nécessaire
   style.textContent = `.CompositionArea { visibility: hidden !important; }`;
   document.head.appendChild(style);
 }
@@ -145,7 +109,6 @@ function removeHiddenCSS() {
 function main(){
   console.log("Call main function")
   
-  // //Adapt fontsize
   try{
   addCss(".NavSidebar { transition: transform 0.25s ease-in-out !important }")
   document.documentElement.style.setProperty("--axo-scrollbar-gutter-thin-vertical","6px")
@@ -155,14 +118,6 @@ function main(){
   catch (e) {
   console.error(e);
   }
-  // addCss(".customDialog { transform: scaleX(0.8) scaleY(0.8) !important; transition: transform 0.3s ease !important; }");    
-  // addCss(".emojiDialog { transform: scaleX(0.7) scaleY(0.7) !important; transition: transform 0.3s ease !important; transformOrigin = left bottom !important; left:2% !important; }");     
-  // addCss("span { font-size: "+window.appConfig.spanFontSize+"% !important; }");    
-  // addCss(".selectable-text { font-size: "+window.appConfig.textFontSize+"% !important; }");  
-  // addCss(".message-out {  padding-right: 20px !important; }");
-  // addCss(".message-in {  padding-left: 20px !important; }");  
-  
-  // X.overlayMenus().style.width="0";
  
   X.chatList().style.minWidth = "100%"
   X.chatWindow().style.minWidth = "100%"
@@ -434,7 +389,6 @@ function backupBackButton()
   }
 } 
 }
-
 
 //-----------------------------------------------------------------------------
 //          Avoid opening Message menu unwillingly when scrolling
