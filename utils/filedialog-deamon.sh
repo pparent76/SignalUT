@@ -74,6 +74,7 @@ xev -root  | while read -r _; do
                         xdotool sleep 0.3
                     else
                         bin/xdotool key  --window $window --repeat 2 F6
+                        xdotool sleep 0.3
                     fi
                     xdotool key  --window $window KP_Enter
                   
