@@ -5,6 +5,8 @@ PID=$1
 needtoexport=0;
 echo "" > /home/phablet/.cache/signalut.pparent/exportlock
 allreadynavigated=0
+allreadyseenwindow=0
+firstimport=1;
 
 xev -root  | while read -r _; do
 
@@ -16,6 +18,19 @@ xev -root  | while read -r _; do
     for window in $windows ; do
         count=$(( count + 1 ))
     done
+    
+    if [ "$count" -eq "0" ]; then
+        windows=$(xdotool search --all --pid $PID)
+        for window in $windows ; do
+            count=$(( count + 1 ))
+        done
+        if [ "$count" -eq "0" ]&&  [ "$allreadyseenwindow" -eq "1" ] ; then
+            echo "No window left exiting...";
+            exit 0;
+        fi
+    else
+        allreadyseenwindow=1;
+    fi
     
     if [ "$count" -gt "1" ]; then
         echo "more than one window"
@@ -44,20 +59,28 @@ xev -root  | while read -r _; do
                         while read -t 0.01 -r _; do :; done
                     done
                     xdotool windowfocus $window
-                    xdotool sleep 0.1
-                    xdotool key  --window $window Alt+d
-                    xdotool sleep 0.5
-                    xdotool key  --window $window F6
-                    xdotool sleep 0.1
-                    xdotool key  --window $window F6
-                    xdotool sleep 0.1
+                    if [ "$firstimport" -eq "1" ]; then
+                        bin/xdotool key  --window $window --repeat 5 Tab
+                        firstimport=0;
+                        xdotool sleep 0.1
+                        xdotool key  --window $window KP_Enter
+                        xdotool sleep 0.5 
+                        xdotool key  --window $window F6
+                        xdotool sleep 0.3
+                    else
+                        bin/xdotool key  --window $window --repeat 2 F6
+                    fi
                     xdotool key  --window $window KP_Enter
-                    xdotool sleep 0.1
-                    xdotool key  --window $window KP_Enter                    
+                  
                     needtoexport=0
                     while read -t 0.01 -r _; do :; done
-                    xdotool sleep 5
+                    xdotool sleep 1
+                    echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png
+                    xdotool sleep 4
                     while read -t 0.01 -r _; do :; done
+                    for file in /home/phablet/.cache/signalut.pparent/downloads/* ; do
+                        utils/rm.sh $file
+                    done
                     echo "">/home/phablet/.cache/signalut.pparent/downloads/00000000.png
                     utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
                 fi
