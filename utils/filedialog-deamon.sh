@@ -1,6 +1,11 @@
 #!/bin/bash
 
-#export QT_QPA_PLATFORM=xcb
+echo "df84ff50557373cd882941cafb7ad344  /lib/aarch64-linux-gnu/liblomiri-private.so"| md5sum -c -
+#If we are running the latest version of lomiri we'll use Xcb to display ContentHub Windows
+if [ "$?" -eq "0" ]; then
+    export QT_QPA_PLATFORM=xcb
+fi
+
 PID=$1
 needtoexport=0;
 echo "" > /home/phablet/.cache/signalut.pparent/exportlock
