@@ -65,8 +65,10 @@ xev -root  | while read -r _; do
                     done
                     xdotool windowfocus $window
                     if [ "$firstimport" -eq "1" ]; then
-                        bin/xdotool key  --window $window --repeat 5 Tab
                         firstimport=0;
+                        xdotool key  --window $window F6
+                        xdotool sleep 0.1
+                        bin/xdotool key  --window $window --repeat 2 Tab
                         xdotool sleep 0.1
                         xdotool key  --window $window KP_Enter
                         xdotool sleep 0.5 
