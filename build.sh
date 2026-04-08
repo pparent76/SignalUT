@@ -171,7 +171,7 @@ for dep in $DEPENDENCIES ; do
     dpkg-deb -x "${dep}.deb" "${dep}.deb_extract_chsdjksd"
 done
 
-wget https://launchpad.net/ubuntu/+source/coreutils/9.4-3ubuntu6/+build/28027146/+files/coreutils_9.4-3ubuntu6_arm64.deb
+wget https://ports.ubuntu.com/pool/main/c/coreutils/coreutils_9.4-3ubuntu6_arm64.deb
 rm -rvf "coreutils_9.4-3ubuntu6_arm64.deb_extract_chsdjksd" || true
 mkdir "coreutils_9.4-3ubuntu6_arm64.deb_extract_chsdjksd"
 dpkg-deb -x "coreutils_9.4-3ubuntu6_arm64.deb" "coreutils_9.4-3ubuntu6_arm64.deb_extract_chsdjksd"
@@ -185,8 +185,8 @@ cd ${BUILD_DIR}
 
 PKGNAME="maliit-inputcontext-gtk"
 VERSION_MALIIT="0.99.1+git20151116.72d7576"
-ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576.orig.tar.xz"
-DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/maliit-inputcontext-gtk/0.99.1+git20151116.72d7576-3build3/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576-3build3.debian.tar.xz"
+ORIG_URL="https://ports.ubuntu.com/ubuntu-ports/ubuntu-ports/pool/universe/m/maliit-inputcontext-gtk/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576.orig.tar.xz"
+DEBIAN_URL="https://ports.ubuntu.com/ubuntu-ports/ubuntu-ports/pool/universe/m/maliit-inputcontext-gtk/maliit-inputcontext-gtk_0.99.1+git20151116.72d7576-3build3.debian.tar.xz"
 
 
 
@@ -226,8 +226,8 @@ cd ${BUILD_DIR}/libnotify
 
 PKGNAME="libnotify"
 VERSION="0.8.3"
-ORIG_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1build2/libnotify_0.8.3.orig.tar.xz"
-DEBIAN_URL="https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libnotify/0.8.3-1/libnotify_0.8.3-1.debian.tar.xz"
+ORIG_URL="https://ports.ubuntu.com/pool/main/libn/libnotify/libnotify_0.8.3.orig.tar.xz"
+DEBIAN_URL="https://ports.ubuntu.com/pool/main/libn/libnotify/libnotify_0.8.3-1build2.debian.tar.xz"
 
 echo "📦 Download sources..."
 wget -q "$ORIG_URL" -O "${PKGNAME}_${VERSION}.orig.tar.xz"

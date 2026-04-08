@@ -16,6 +16,8 @@ const X = {
     chatWindow: () => document.querySelector('.Inbox__conversation-stack'),
       chatHeader: () => document.querySelector('.module-ConversationHeader__header'),
       moduleTimelineMessages: () => document.querySelector('.module-timeline__messages__container'),
+    preferenceContentWindow: () => document.querySelector('.Preferences__content'),
+      preferenceContentHeader: () => document.querySelector('.Preferences__title'),
   //-------------------------------------------------------------------------------------------
 
   upperWrapper: () => document.querySelector('.three'),
@@ -110,7 +112,7 @@ function main(){
   console.log("Call main function")
   
   try{
-  addCss(".NavSidebar { transition: transform 0.25s ease-in-out !important }")
+  addCss(".NavSidebar { transition: transform 0.25s ease-in-out !important ; min-width: 100% !important; position: absolute; z-index:1000; }")
   document.documentElement.style.setProperty("--axo-scrollbar-gutter-thin-vertical","6px")
   addCss(".module-timeline__messages__container:not(:hover) {scrollbar-color: transparent transparent;}")
   addCss(".module-timeline__messages__container{ scrollbar-width: thin !important ; }");
@@ -224,7 +226,7 @@ function main(){
 window.addEventListener("click", function() {
   //Register Last clicked element
   lastClickEl=event.target;  
-  //console.log(lastClickEl);
+  console.log(lastClickEl);
    //---------------------------------------------------------------------------------
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    // Important section: Handle navigation towards chatWindow
@@ -234,21 +236,32 @@ window.addEventListener("click", function() {
         showchatWindow();
   else
   {
-  if (X.textEditor().contains(lastClickEl)|| lastClickEl.contains(X.textEditor()))
-      {
-       X.textEditor().setAttribute('contenteditable', "plaintext-only");
-       X.textEditor().classList.remove('contenteditableDisabled');
-       setTimeout( () => 
-       {
-       if (document.activeElement !== X.textEditor()) {
-          X.textEditor().focus()
-       }
-       },20);
+  if ( X.textEditor() )
+    {
+    if (X.textEditor().contains(lastClickEl)|| lastClickEl.contains(X.textEditor()))
+        {
+        X.textEditor().setAttribute('contenteditable', "plaintext-only");
+        X.textEditor().classList.remove('contenteditableDisabled');
+        setTimeout( () => 
+        {
+        if (document.activeElement !== X.textEditor()) {
+            X.textEditor().focus()
+        }
+        },20);
       }
+    }
   }
-  
+ 
+   if ( lastClickEl.classList.contains('Preferences__button') )
+   {
+     console.log("menu pref click");
+     showPreferenceContentWindow();
+   }
+   
     if (lastClickEl.classList.contains('module-ConversationHeader__button--search') || lastClickEl.classList.contains('module-Button--icon--search') )
         showchatlist();
+  
+ 
   
 }); 
 
@@ -258,32 +271,6 @@ window.addEventListener("click", function() {
   backupBackButton();
   },400);
 })
-
-document.body.addEventListener("focusin", function() {
-  if (event.target.classList.contains('NavTabs__Toggle'))
-  {
-  if (document.querySelector(".NavTabs--collapsed"))
-  {
-    console.log("Activate left menu")
-    X.chatList().style.transform= 'translateX(0)';
-    X.chatList().style.position= 'static';
-    X.chatList().style.minWidth= '';
-  }
-  else
-  {
-    console.log("Disable left menu")
-    X.chatList().style.position= 'absolute';
-    X.chatList().style.transform= 'translateX(-100%)';
-    X.chatList().style.minWidth= '100%';
-    setTimeout( () => {
-     X.chatList().style.zIndex = "1000"
-    },50);
-    showchatlist();
-  }
-  }
-
-})
-
 
 //-----------------------------------------------------------------------------
 //         Function to add a back button in chat view header
@@ -302,6 +289,21 @@ function addBackButtonToChatView(){
     if (! X.chatHeader().querySelector('#back_button') )
         X.chatHeader().prepend(newHTML);
 }
+
+function addBackButtonToPreferences(){
+
+    addCss(".back_button_pref span { display:block; height: 100%; width: 100%;}.back_button_pref {  z-index:200; width:37px; height:45px; } html[dir] .back_button_pref { border-radius:50%; margin-left: 3vw;} html[dir=ltr] .back_button_pref { right:11px } html[dir=rtl] .back_button_pref { left:11px } .back_button_pref path { fill:var(--panel-header-icon); fill-opacity:1 } .svg_back { transform: rotate(90deg); height: 100%;}");
+    
+    var newHTML         = document.createElement('div');
+    newHTML.className += "back_button_pref";
+    newHTML.style = "";
+    newHTML.addEventListener("click", showchatlist);
+    newHTML.innerHTML   = "<span data-icon='left' id='back_button_pref' ><svg class='svg_back' id='Layer_1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 21 21' width='21' height='21'><path fill='#000000' fill-opacity='1' d='M4.8 6.1l5.7 5.7 5.7-5.7 1.6 1.6-7.3 7.2-7.3-7.2 1.6-1.6z'></path></svg></span>";
+
+    if (! X.preferenceContentHeader().querySelector('#back_button_pref') )
+        X.preferenceContentHeader().prepend(newHTML);
+}
+
 
 
 //-----------------------------------------------------------------------------
@@ -343,13 +345,39 @@ function showchatWindow(){
    //Slide Chatlist panel to the left
    X.chatList().style.position= 'absolute'; 
    void X.chatList().offsetWidth;
-   X.chatList().style.transform = 'translateX(-100%)'; // transition se déclenche ici
+   if (document.querySelector(".NavTabs--collapsed"))
+      X.chatList().style.transform = 'translateX(-100%)';
+    else
+      X.chatList().style.transform = 'translateX(-125%)';      
    X.chatList().style.transition= "transform 0.25s ease-in-out !important";
    X.chatList().style.willChange= "transform";
    X.chatList().style.minWidth= '100%';
    
   //Hide left menu (in case it was oppened)
     addBackButtonToChatViewWithTimeout();
+}
+
+function showPreferenceContentWindow(){
+  //Make sure to unfocus any focused élément of previous view
+   document.activeElement.blur();
+   
+   X.preferenceContentWindow().style.position=""
+   X.preferenceContentWindow().style.left=""
+   removeHiddenCSS();
+   
+   //Slide Chatlist panel to the left
+   X.chatList().style.position= 'absolute'; 
+   void X.chatList().offsetWidth;
+   if (document.querySelector(".NavTabs--collapsed"))
+      X.chatList().style.transform = 'translateX(-100%)';
+   else
+      X.chatList().style.transform = 'translateX(-125%)'; 
+   X.chatList().style.transition= "transform 0.25s ease-in-out !important";
+   X.chatList().style.willChange= "transform";
+   X.chatList().style.minWidth= '100%';
+   
+  //Hide left menu (in case it was oppened)
+  addBackButtonToPreferences();
 }
 
 function addBackButtonToChatViewWithTimeout()
@@ -361,11 +389,7 @@ function addBackButtonToChatViewWithTimeout()
 
     setTimeout(() => {
     addBackButtonToChatView();
-    }, 300);    
-    
-    setTimeout(() => {
-    addBackButtonToChatView();
-    }, 600); 
+    }, 500);    
     
     setTimeout(() => {
     addBackButtonToChatView();
@@ -375,7 +399,7 @@ function addBackButtonToChatViewWithTimeout()
 
 function backupBackButton()
 {
- if (X.chatList().style.transform== "translateX(-100%)") {
+ if (X.chatList().style.transform== "translateX(-125%)" || X.chatList().style.transform== "translateX(-100%)") {
   if (  X.chatHeader() )
   {
     if (! X.chatHeader().querySelector('#back_button')  )
