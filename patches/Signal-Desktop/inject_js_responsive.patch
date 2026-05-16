@@ -17,7 +17,7 @@ index a5e0a20ef..51014a823 100644
 +        keyboardHeight: app.commandLine.getSwitchValue('keyboard-height')
 +      };
 +
-+      const secondaryPath = join(__dirname, 'responsive.js');
++      const secondaryPath = join(app.getAppPath(),'js','responsive.js');
 +      const jsCode = readFileSync(secondaryPath, 'utf8');
 +
 +      await window.webContents.executeJavaScript(

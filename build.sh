@@ -18,7 +18,7 @@ INSTALL_DIR="${BUILD_DIR}/install"
 echo "[1/10] Clone Signal-Desktop github"
 
 cd ${BUILD_DIR}
-signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.3.0.tar.gz
+signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.10.0.tar.gz
 
 if [ ! -e "Signal-Desktop" ]; then
     mkdir -p "Signal-Desktop"
@@ -35,7 +35,6 @@ cd ${BUILD_DIR}/Signal-Desktop
 echo "[2/10] Applying patches"
 
 if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
-
     #Patch to build for arm64
     
     if [ ! -e ".bump_electronbuilder_version-applyed" ]; then
@@ -58,7 +57,8 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     fi
     
     echo "Add responsive.js"
-    cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/app/
+    mkdir ${BUILD_DIR}/Signal-Desktop/js/
+    cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/js/
     
 fi
 
@@ -68,11 +68,27 @@ fi
 echo "[3/10] Building Signal-Desktop..."
 
  if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
+    PATH=$PATH:${BUILD_DIR}/.clickable/home/.local/share/pnpm/
+    
+    echo "---> Installing nvm"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash || true
+    export NVM_DIR="$HOME/.nvm"
+    echo "---> load nvm: $NVM_DIR"
+    . "$NVM_DIR/nvm.sh" || true # This loads nvm
+
+    echo "---> nvm install 24.15.0"
+    nvm install 24.15.0
+    nvm use 24.15.0
+    node -v
+    
+    echo "---> pnpm install"
     curl -fsSL https://get.pnpm.io/install.sh | env SHELL=bash sh -
     source ${BUILD_DIR}/.clickable/home/.bashrc
+
     pnpm -v
   
     #pre-install X64 packages
+    echo "--->Pre-install"
     pnpm install --verbose  --network-concurrency=1 --child-concurrency=1 || true
   
     export npm_config_arch=amd64
@@ -81,7 +97,7 @@ echo "[3/10] Building Signal-Desktop..."
     export ESBUILD_ARCH=arm64
     export SIGNAL_ENV=release
     
-    echo "Install"
+    echo "--->Install"
     sleep 5
     pnpm install --verbose  --network-concurrency=1 --child-concurrency=1
     
@@ -91,7 +107,7 @@ echo "[3/10] Building Signal-Desktop..."
     cd ..
     pnpm run generate
        
-    echo "Build Signal"
+    echo "--->Build Signal"
     sleep 5;
     # This is the equivalent of 'npm run build-linux' with some adjustments
     pnpm run build:esbuild:prod 
