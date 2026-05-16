@@ -56,6 +56,13 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
         touch .fix-inject-responsive.patch-applyed
     fi
     
+        #Patch to make the app responsive
+    if [ ! -e ".fix-oomtracker.patch-applyed" ]; then
+        echo "Apply .fix-oomtracker.patch"
+        patch -p1 < ${ROOT}/patches/Signal-Desktop/fix-oomtracker.patch
+        touch .fix-oomtracker.patch-applyed
+    fi
+    
     echo "Add responsive.js"
     mkdir ${BUILD_DIR}/Signal-Desktop/js/
     cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/js/
