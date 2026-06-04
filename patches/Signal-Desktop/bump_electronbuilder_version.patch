@@ -1,9 +1,0 @@
-diff --git a/package.json b/package.json
-index 633ec1e10..9aff3d312 100644
---- a/package.json
-+++ b/package.json
-315c315
-<     "electron-builder": "26.0.14",
----
->     "electron-builder": "26.0.18",
-

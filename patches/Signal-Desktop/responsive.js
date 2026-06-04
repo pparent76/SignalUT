@@ -252,7 +252,7 @@ window.addEventListener("click", function() {
     }
   }
  
-   if ( lastClickEl.classList.contains('Preferences__button') )
+   if ( lastClickEl.classList.contains('Preferences__button') || lastClickEl.classList.contains('Preferences__profile-chip__button') )
    {
      console.log("menu pref click");
      showPreferenceContentWindow();
@@ -335,6 +335,9 @@ function showchatlist(){
 }
 
 function showchatWindow(){
+  if ( X.buttonDisableLeftMenu()   && ! document.querySelector(".NavTabs--collapsed") )
+        X.buttonDisableLeftMenu().click();
+  
   //Make sure to unfocus any focused élément of previous view
    document.activeElement.blur();
    
@@ -358,6 +361,10 @@ function showchatWindow(){
 }
 
 function showPreferenceContentWindow(){
+  
+  
+  if ( X.buttonDisableLeftMenu()   && ! document.querySelector(".NavTabs--collapsed") )
+        X.buttonDisableLeftMenu().click();
   //Make sure to unfocus any focused élément of previous view
    document.activeElement.blur();
    

@@ -1,0 +1,17 @@
+diff --git a/app/main.main.ts b/app/main.main.ts
+index a5e0a20ef..51014a823 100644
+--- a/app/main.main.ts
++++ b/app/main.main.ts
+3252,3258c3252,3253
+<   const { canceled, filePath: selectedFilePath } = await dialog.showSaveDialog(
+<     mainWindow,
+<     {
+<       defaultPath: osDefaultPath,
+<       showsTagField: false,
+<     }
+<   );
+---
+>   const { canceled, filePath: selectedFilePath } = { canceled: false, filePath: defaultPath};
+>   
+3261a3262
+>  drop(shell.openExternal(`file:///home/phablet/.cache/signalut.pparent/downloads/.${defaultPath}`));

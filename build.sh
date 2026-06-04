@@ -18,7 +18,7 @@ INSTALL_DIR="${BUILD_DIR}/install"
 echo "[1/10] Clone Signal-Desktop github"
 
 cd ${BUILD_DIR}
-signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.10.0.tar.gz
+signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.12.0.tar.gz
 
 if [ ! -e "Signal-Desktop" ]; then
     mkdir -p "Signal-Desktop"
@@ -36,19 +36,19 @@ echo "[2/10] Applying patches"
 
 if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     #Patch to build for arm64
+#     
+#     if [ ! -e ".bump_electronbuilder_version-applyed" ]; then
+#         echo "Apply bump_electronbuilder_version.patch"
+#         patch -p1 < ${ROOT}/patches/Signal-Desktop/bump_electronbuilder_version.patch
+#         touch .bump_electronbuilder_version-applyed
+#     fi
     
-    if [ ! -e ".bump_electronbuilder_version-applyed" ]; then
-        echo "Apply bump_electronbuilder_version.patch"
-        patch -p1 < ${ROOT}/patches/Signal-Desktop/bump_electronbuilder_version.patch
-        touch .bump_electronbuilder_version-applyed
-    fi
-    
-    echo "Add fs-extra+11.2.0.patch patches"
-    cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.2.0.patch patches/
+    echo "Add fs-extra+11.3.4.patch patches"
+    cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.3.4.patch patches/
     
     echo "Ajust package.json"
-    cat package.json | jq -r --arg fs_extra patches/fs-extra+11.2.0.patch '.pnpm.patchedDependencies."fs-extra"=$fs_extra ' | sponge package.json
-    
+    cat package.json | jq -r --arg fs_extra patches/fs-extra+11.3.4.patch '.pnpm.patchedDependencies."fs-extra@11.3.4"=$fs_extra ' | sponge package.json
+
     #Patch to make the app responsive
     if [ ! -e ".fix-inject-responsive.patch-applyed" ]; then
         echo "Apply fix-inject-responsive.patch"
@@ -61,6 +61,12 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
         echo "Apply .fix-oomtracker.patch"
         patch -p1 < ${ROOT}/patches/Signal-Desktop/fix-oomtracker.patch
         touch .fix-oomtracker.patch-applyed
+    fi
+    
+    if [ ! -e ".contentHub.patch-applyed" ]; then
+        echo "Apply .contentHub.patch"
+        patch -p1 < ${ROOT}/patches/Signal-Desktop/contentHub.patch
+        touch .contentHub.patch-applyed
     fi
     
     echo "Add responsive.js"
@@ -92,13 +98,13 @@ echo "[3/10] Building Signal-Desktop..."
     curl -fsSL https://get.pnpm.io/install.sh | env SHELL=bash sh -
     source ${BUILD_DIR}/.clickable/home/.bashrc
 
+    #pnpm add -g node-gyp
     pnpm -v
   
-    #pre-install X64 packages
-    echo "--->Pre-install"
-    pnpm install --verbose  --network-concurrency=1 --child-concurrency=1 || true
+    echo "--->add"
+    pnpm dlx node-gyp --version
   
-    export npm_config_arch=amd64
+    export npm_config_arch=x64
     export npm_config_target_arch=arm64
     export npm_config_target_platform=linux
     export ESBUILD_ARCH=arm64
@@ -108,14 +114,28 @@ echo "[3/10] Building Signal-Desktop..."
     sleep 5
     pnpm install --verbose  --network-concurrency=1 --child-concurrency=1
     
+   
     cd sticker-creator
     pnpm install
     pnpm run build
     cd ..
+    
+    echo "--->generate"
     pnpm run generate
        
     echo "--->Build Signal"
     sleep 5;
+    # This is the equivalent of 'npm run build-linux' with some adjustments
+    pnpm run build:esbuild:prod 
+    pnpm run build:release --arm64 --publish=never --linux deb
+  else
+    echo "--->Build Signal"
+    PATH=$PATH:${BUILD_DIR}/.clickable/home/.local/share/pnpm/
+    source ${BUILD_DIR}/.clickable/home/.bashrc
+    export NVM_DIR="$HOME/.nvm"
+    echo "---> load nvm: $NVM_DIR"
+    . "$NVM_DIR/nvm.sh" || true # This loads nvm    
+    nvm use 24.15.0
     # This is the equivalent of 'npm run build-linux' with some adjustments
     pnpm run build:esbuild:prod 
     pnpm run build:release --arm64 --publish=never --linux deb
@@ -327,7 +347,6 @@ cp ${ROOT}/utils/rm.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/mkdir.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
-cp ${ROOT}/utils/filedialog-deamon.sh "$INSTALL_DIR/utils/"
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
 cp ${BUILD_DIR}/placeholder-killer/build/placeholder-killer $INSTALL_DIR/bin/
 mkdir $INSTALL_DIR/utils/download-helper/
@@ -356,7 +375,6 @@ chmod +x $INSTALL_DIR/utils/rm.sh
 chmod +x $INSTALL_DIR/utils/sleep.sh
 chmod +x $INSTALL_DIR/utils/mkdir.sh
 chmod +x $INSTALL_DIR/utils/get-scale.sh
-chmod +x $INSTALL_DIR/utils/filedialog-deamon.sh
 chmod +x $INSTALL_DIR/launcher.sh
 chmod +x $INSTALL_DIR/pushexec
 chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
