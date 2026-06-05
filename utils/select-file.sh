@@ -1,7 +1,9 @@
 #!/bin/bash
 
-output=$(qmlscene /opt/click.ubuntu.com/signalut.pparent/current/utils/upload-helper/qml/ImportPage.qml \
-    -I /opt/click.ubuntu.com/signalut.pparent/current/utils/upload-helper/ 2>&1)
+SCRIPT_DIR="${BASH_SOURCE[0]%/*}"
+
+output=$(qmlscene $SCRIPT_DIR/upload-helper/qml/ImportPage.qml \
+    -I $SCRIPT_DIR/upload-helper/ 2>&1)
 
 while IFS= read -r line; do
     if [[ $line == *"RESULT-URL:"* ]]; then
