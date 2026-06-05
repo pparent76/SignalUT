@@ -137,6 +137,10 @@ function main(){
   //-------------------------------------------------------
   document.body.addEventListener('focusin', (event) => {
     lastFocusEl = event.target;
+    if (lastFocusEl.contains(X.searchBar()))
+    {
+      showchatlist();
+    }
     if ( (lastFocusEl.isContentEditable || X.messageEditor().contains(lastFocusEl) ) && (!lastClickEl || ! lastClickEl.isContentEditable ) )
     {
       if (lastFocusEl.contains(X.textEditor()) || lastFocusEl.contains === X.textEditor())
@@ -259,11 +263,6 @@ window.addEventListener("click", function() {
      console.log("menu pref click");
      showPreferenceContentWindow();
    }
-   
-    // if (lastClickEl.classList.contains('module-ConversationHeader__button--search') || lastClickEl.classList.contains('module-Button--icon--search') )
-    //     showchatlist();
-  
- 
   
 }); 
 
