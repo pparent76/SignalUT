@@ -34,7 +34,9 @@ const X = {
   
   buttonActivateLeftMenu: () => X.chatlistHeader().querySelector('.NavTabs__Toggle'),
    buttonDisableLeftMenu: () => X.leftMenu().querySelector('.NavTabs__Toggle'),
-   buttonTogleLeftMenuHelper: () => document.querySelector('.NavTabs__ItemLabel')
+   buttonTogleLeftMenuHelper: () => document.querySelector('.NavTabs__ItemLabel'),
+   
+   searchBar: () => document.querySelector('.LeftPaneSearchInput__input')
 };
 
 // Declare variables
@@ -258,8 +260,8 @@ window.addEventListener("click", function() {
      showPreferenceContentWindow();
    }
    
-    if (lastClickEl.classList.contains('module-ConversationHeader__button--search') || lastClickEl.classList.contains('module-Button--icon--search') )
-        showchatlist();
+    // if (lastClickEl.classList.contains('module-ConversationHeader__button--search') || lastClickEl.classList.contains('module-Button--icon--search') )
+    //     showchatlist();
   
  
   
@@ -348,10 +350,7 @@ function showchatWindow(){
    //Slide Chatlist panel to the left
    X.chatList().style.position= 'absolute'; 
    void X.chatList().offsetWidth;
-   if (document.querySelector(".NavTabs--collapsed"))
-      X.chatList().style.transform = 'translateX(-100%)';
-    else
-      X.chatList().style.transform = 'translateX(-125%)';      
+   X.chatList().style.transform = 'translateX(-100%)';     
    X.chatList().style.transition= "transform 0.25s ease-in-out !important";
    X.chatList().style.willChange= "transform";
    X.chatList().style.minWidth= '100%';
@@ -375,10 +374,7 @@ function showPreferenceContentWindow(){
    //Slide Chatlist panel to the left
    X.chatList().style.position= 'absolute'; 
    void X.chatList().offsetWidth;
-   if (document.querySelector(".NavTabs--collapsed"))
-      X.chatList().style.transform = 'translateX(-100%)';
-   else
-      X.chatList().style.transform = 'translateX(-125%)'; 
+   X.chatList().style.transform = 'translateX(-100%)';
    X.chatList().style.transition= "transform 0.25s ease-in-out !important";
    X.chatList().style.willChange= "transform";
    X.chatList().style.minWidth= '100%';
@@ -406,7 +402,7 @@ function addBackButtonToChatViewWithTimeout()
 
 function backupBackButton()
 {
- if (X.chatList().style.transform== "translateX(-125%)" || X.chatList().style.transform== "translateX(-100%)") {
+ if (X.chatList().style.transform== "translateX(-100%)") {
   if (  X.chatHeader() )
   {
     if (! X.chatHeader().querySelector('#back_button')  )

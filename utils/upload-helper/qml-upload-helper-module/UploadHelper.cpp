@@ -59,9 +59,9 @@ void UploadHelper::uploadFile(QString path)
     clearCache(blob_path);
     QFileInfo fi(path);
     QString destination = blob_path + fi.fileName();
-    qDebug() << "Copy "<<path<<" to "<<destination;
     QFile::copy(path, destination);
     QFile::remove(path);
+    qDebug() << "RESULT-URL: "<<destination;
 }
 
 

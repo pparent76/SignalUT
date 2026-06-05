@@ -1,8 +1,77 @@
 diff --git a/app/main.main.ts b/app/main.main.ts
 index a5e0a20ef..51014a823 100644
---- a/app/main.main.ts
-+++ b/app/main.main.ts
-3252,3258c3252,3253
+9a10,11
+> import { execFile } from 'node:child_process'
+> import { readFile, stat } from 'node:fs/promises';
+3241a3244,3310
+> //----------------------------------------------------------
+> //       Function added for Ubuntu Touch (contentHub)
+> //----------------------------------------------------------
+> ipc.handle('pick-file', async () => {
+>   
+>   const MIME_BY_EXT: Readonly<Record<string, string>> = {
+>   '.jpg': 'image/jpeg',
+>   '.jpeg': 'image/jpeg',
+>   '.png': 'image/png',
+>   '.gif': 'image/gif',
+>   '.webp': 'image/webp',
+>   '.heic': 'image/heic',
+>   '.pdf': 'application/pdf',
+>   '.txt': 'text/plain',
+>   '.apng': 'image/apng',
+>   '.avif': 'image/avif',
+>   '.bmp': 'image/bmp',
+>   '.svg': 'image/svg+xml',
+>   '.mp4': 'video/mp4',
+>   '.mov': 'video/quicktime',
+>   '.webm': 'video/webm',
+>   '.mkv': 'video/x-matroska',
+>   '.avi': 'video/x-msvideo',
+>   '.3gp': 'video/3gpp',
+>   '.m4v': 'video/x-m4v',
+>   '.mpg': 'video/mpeg',
+>   '.mpeg': 'video/mpeg'
+>   };
+>   
+>   const filePath = await new Promise<string>((resolve, reject) => {
+>     execFile(
+>       '/opt/click.ubuntu.com/signalut.pparent/current/utils/select-file.sh',
+>       [],
+>       (error, stdout) => {
+>         if (error) {
+>           reject(error);
+>           return;
+>         }
+> 
+>         resolve(stdout.trim());
+>       }
+>     );
+>   });
+> 
+>   if (!filePath) {
+>     return { canceled: true };
+>   }
+> 
+>   const [data, { mtimeMs }] = await Promise.all([
+>     readFile(filePath),
+>     stat(filePath),
+>   ]);
+> 
+>   const fileType = MIME_BY_EXT[extname(filePath).toLowerCase()] ?? 'application/octet-stream';
+>   return {
+>     canceled: false,
+>     data: data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength),
+>     name: basename(filePath),
+>     type: fileType,
+>     lastModified: mtimeMs,
+>   };
+>   
+> });
+> //----------------------------------------------------------
+> //       End Function added for Ubuntu Touch (contentHub)
+> //----------------------------------------------------------
+> 
+3252,3258c3321,3322
 <   const { canceled, filePath: selectedFilePath } = await dialog.showSaveDialog(
 <     mainWindow,
 <     {
@@ -13,5 +82,15 @@ index a5e0a20ef..51014a823 100644
 ---
 >   const { canceled, filePath: selectedFilePath } = { canceled: false, filePath: defaultPath};
 >   
-3261a3262
+3261a3326
 >  drop(shell.openExternal(`file:///home/phablet/.cache/signalut.pparent/downloads/.${defaultPath}`));
+
+
+diff --git a/ts/windows/main/start.preload.ts b/ts/windows/main/start.preload.ts
+index a5e0a20ef..51014a823 100644
+32a33
+> import { setupFileInputPicker } from './fileInputPicker.preload.ts';
+34a36,37
+> 
+> setupFileInputPicker();
+

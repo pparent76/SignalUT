@@ -35,13 +35,8 @@ cd ${BUILD_DIR}/Signal-Desktop
 echo "[2/10] Applying patches"
 
 if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
-    #Patch to build for arm64
-#     
-#     if [ ! -e ".bump_electronbuilder_version-applyed" ]; then
-#         echo "Apply bump_electronbuilder_version.patch"
-#         patch -p1 < ${ROOT}/patches/Signal-Desktop/bump_electronbuilder_version.patch
-#         touch .bump_electronbuilder_version-applyed
-#     fi
+   
+   #Patch to build for arm64
     
     echo "Add fs-extra+11.3.4.patch patches"
     cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.3.4.patch patches/
@@ -56,16 +51,18 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
         touch .fix-inject-responsive.patch-applyed
     fi
     
-        #Patch to make the app responsive
+    #Patch to fix running on a confined environement
     if [ ! -e ".fix-oomtracker.patch-applyed" ]; then
         echo "Apply .fix-oomtracker.patch"
         patch -p1 < ${ROOT}/patches/Signal-Desktop/fix-oomtracker.patch
         touch .fix-oomtracker.patch-applyed
     fi
     
+    #Patch to have ContentHub working
     if [ ! -e ".contentHub.patch-applyed" ]; then
         echo "Apply .contentHub.patch"
         patch -p1 < ${ROOT}/patches/Signal-Desktop/contentHub.patch
+        cp ${ROOT}/patches/Signal-Desktop/fileInputPicker.preload.ts ts/windows/main/fileInputPicker.preload.ts
         touch .contentHub.patch-applyed
     fi
     
@@ -129,16 +126,16 @@ echo "[3/10] Building Signal-Desktop..."
     pnpm run build:esbuild:prod 
     pnpm run build:release --arm64 --publish=never --linux deb
   else
-    echo "--->Build Signal"
-    PATH=$PATH:${BUILD_DIR}/.clickable/home/.local/share/pnpm/
-    source ${BUILD_DIR}/.clickable/home/.bashrc
-    export NVM_DIR="$HOME/.nvm"
-    echo "---> load nvm: $NVM_DIR"
-    . "$NVM_DIR/nvm.sh" || true # This loads nvm    
-    nvm use 24.15.0
-    # This is the equivalent of 'npm run build-linux' with some adjustments
-    pnpm run build:esbuild:prod 
-    pnpm run build:release --arm64 --publish=never --linux deb
+     echo "--->Build Signal"
+     PATH=$PATH:${BUILD_DIR}/.clickable/home/.local/share/pnpm/
+     source ${BUILD_DIR}/.clickable/home/.bashrc
+     export NVM_DIR="$HOME/.nvm"
+     echo "---> load nvm: $NVM_DIR"
+     . "$NVM_DIR/nvm.sh" || true # This loads nvm    
+     nvm use 24.15.0
+     # This is the equivalent of 'npm run build-linux' with some adjustments
+     pnpm run build:esbuild:prod 
+     pnpm run build:release --arm64 --publish=never --linux deb
   fi
   
   
@@ -347,6 +344,7 @@ cp ${ROOT}/utils/rm.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/sleep.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/mkdir.sh "$INSTALL_DIR/utils/"
 cp ${ROOT}/utils/get-scale.sh "$INSTALL_DIR/utils/"
+cp ${ROOT}/utils/select-file.sh "$INSTALL_DIR/utils/"
 cp ${BUILD_DIR}/xdg-open/build/xdg-open $INSTALL_DIR/bin/
 cp ${BUILD_DIR}/placeholder-killer/build/placeholder-killer $INSTALL_DIR/bin/
 mkdir $INSTALL_DIR/utils/download-helper/
@@ -375,6 +373,7 @@ chmod +x $INSTALL_DIR/utils/rm.sh
 chmod +x $INSTALL_DIR/utils/sleep.sh
 chmod +x $INSTALL_DIR/utils/mkdir.sh
 chmod +x $INSTALL_DIR/utils/get-scale.sh
+chmod +x $INSTALL_DIR/utils/select-file.sh
 chmod +x $INSTALL_DIR/launcher.sh
 chmod +x $INSTALL_DIR/pushexec
 chmod +x $INSTALL_DIR/opt/Signal/signal-desktop
