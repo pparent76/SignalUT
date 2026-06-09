@@ -6,9 +6,9 @@
 
 ---
 
-## ⚠️ Important - Alpha State
+## ⚠️ Important - Beta State
 
-Signal UT is currently in **alpha**. Please read the limitations and usage notes carefully before using it.
+Signal UT is currently in **beta**. Please read the limitations and usage notes carefully before using it.
 
 
 ---
