@@ -18,7 +18,7 @@ INSTALL_DIR="${BUILD_DIR}/install"
 echo "[1/10] Clone Signal-Desktop github"
 
 cd ${BUILD_DIR}
-signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.13.0.tar.gz
+signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.15.0.tar.gz
 
 if [ ! -e "Signal-Desktop" ]; then
     mkdir -p "Signal-Desktop"
@@ -103,7 +103,7 @@ echo "[3/10] Building Signal-Desktop..."
   
     export npm_config_arch=x64
     export npm_config_target_arch=arm64
-    export npm_config_target_platform=linux
+    export npm_config_target_platform=linux-arm64
     export ESBUILD_ARCH=arm64
     export SIGNAL_ENV=release
     
