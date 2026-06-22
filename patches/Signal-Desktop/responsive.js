@@ -136,12 +136,17 @@ function main(){
    //  Avoid opening the keyboard when entering a chat
   //-------------------------------------------------------
   document.body.addEventListener('focusin', (event) => {
-    lastFocusEl = event.target;
+    lastLastFocusEl=lastFocusEl;
+    lastFocusEl=event.target;
+    console.log("Focus!!!!");
+    console.log(lastFocusEl);
+    console.log(lastClickEl);    
+    console.log(lastClickEl.isContentEditable);    
     if (lastFocusEl.contains(X.searchBar()))
     {
       showchatlist();
     }
-    if ( (lastFocusEl.isContentEditable || X.messageEditor().contains(lastFocusEl) ) && (!lastClickEl || ! lastClickEl.isContentEditable ) )
+    if ( (lastFocusEl.isContentEditable || X.messageEditor().contains(lastFocusEl) ) && (!lastClickEl || ! lastClickEl.isContentEditable ) && ( lastLastFocusEl != lastFocusEl ) )
     {
       if (lastFocusEl.contains(X.textEditor()) || lastFocusEl.contains === X.textEditor())
       {
@@ -328,6 +333,7 @@ function showchatlist(){
   X.chatList().style.zIndex = "1000"
   X.chatList().style.minWidth= '100%';
   X.buttonTogleLeftMenuHelper().style.display="none";
+  lastLastFocusEl=null;
   
   document.querySelectorAll(".contenteditableDisabled").forEach(el2 => {
     el2.classList.remove('contenteditableDisabled') 
@@ -353,6 +359,8 @@ function showchatWindow(){
    X.chatList().style.transition= "transform 0.25s ease-in-out !important";
    X.chatList().style.willChange= "transform";
    X.chatList().style.minWidth= '100%';
+   
+   lastLastFocusEl=null;
    
   //Hide left menu (in case it was oppened)
     addBackButtonToChatViewWithTimeout();
