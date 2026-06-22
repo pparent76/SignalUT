@@ -137,11 +137,7 @@ function main(){
   //-------------------------------------------------------
   document.body.addEventListener('focusin', (event) => {
     lastLastFocusEl=lastFocusEl;
-    lastFocusEl=event.target;
-    console.log("Focus!!!!");
-    console.log(lastFocusEl);
-    console.log(lastClickEl);    
-    console.log(lastClickEl.isContentEditable);    
+    lastFocusEl=event.target;  
     if (lastFocusEl.contains(X.searchBar()))
     {
       showchatlist();
