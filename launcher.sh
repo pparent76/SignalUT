@@ -61,8 +61,6 @@ fi
 while read p; do
   if [[ "$p" == *"keyboardHeight="* ]]; then keyboardHeight="${p#keyboardHeight=}" ; fi
 done <  /home/phablet/.config/signalut.pparent/signalut.pparent/signalut.pparent.conf 
-    
-utils/rm.sh /home/phablet/.local/share/signalut.pparent/recently-used.xbel
 
 for file in /home/phablet/.cache/signalut.pparent/downloads/* ; do
     utils/rm.sh $file
