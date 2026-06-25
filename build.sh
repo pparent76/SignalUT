@@ -18,7 +18,7 @@ INSTALL_DIR="${BUILD_DIR}/install"
 echo "[1/10] Clone Signal-Desktop github"
 
 cd ${BUILD_DIR}
-signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.15.0.tar.gz
+signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.16.0.tar.gz
 
 if [ ! -e "Signal-Desktop" ]; then
     mkdir -p "Signal-Desktop"
@@ -48,6 +48,9 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     if [ ! -e ".fix-inject-responsive.patch-applyed" ]; then
         echo "Apply fix-inject-responsive.patch"
         patch -p1 < ${ROOT}/patches/Signal-Desktop/inject_js_responsive.patch
+        echo "Add responsive.js"
+        mkdir ${BUILD_DIR}/Signal-Desktop/js/ || true
+        cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/js/
         touch .fix-inject-responsive.patch-applyed
     fi
     
@@ -62,13 +65,8 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     if [ ! -e ".contentHub.patch-applyed" ]; then
         echo "Apply .contentHub.patch"
         patch -p1 < ${ROOT}/patches/Signal-Desktop/contentHub.patch
-        cp ${ROOT}/patches/Signal-Desktop/fileInputPicker.preload.ts ts/windows/main/fileInputPicker.preload.ts
         touch .contentHub.patch-applyed
     fi
-    
-    echo "Add responsive.js"
-    mkdir ${BUILD_DIR}/Signal-Desktop/js/
-    cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/js/
     
 fi
 
@@ -77,10 +75,19 @@ fi
 # ==============================
 echo "[3/10] Building Signal-Desktop..."
 
+oldcc=$CC;
+oldccx=$CXX;
+oldar=$AR;
+oldld=$LD;
+export CC=gcc 
+export CXX=g++ 
+export AR=ar 
+export LD=ld
+
  if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
     PATH=$PATH:${BUILD_DIR}/.clickable/home/.local/share/pnpm/
     
-    echo "---> Installing nvm"
+    echo "---> Downloading nvm from https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh"
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash || true
     export NVM_DIR="$HOME/.nvm"
     echo "---> load nvm: $NVM_DIR"
@@ -91,61 +98,62 @@ echo "[3/10] Building Signal-Desktop..."
     nvm use 24.15.0
     node -v
     
-    echo "---> pnpm install"
+    echo "---> Download pnpm from get.pnpm.io"
     curl -fsSL https://get.pnpm.io/install.sh | env SHELL=bash sh -
     source ${BUILD_DIR}/.clickable/home/.bashrc
 
-    #pnpm add -g node-gyp
     pnpm -v
   
-    echo "--->add"
+    echo "--->dlx node-gyp"
     pnpm dlx node-gyp --version
   
-    export npm_config_arch=x64
+    export npm_config_arch=arm64
     export npm_config_target_arch=arm64
-    export npm_config_target_platform=linux-arm64
+    export npm_config_target_platform=linux
     export ESBUILD_ARCH=arm64
     export SIGNAL_ENV=release
     
     echo "--->Install"
     sleep 5
-    pnpm install --verbose  --network-concurrency=1 --child-concurrency=1
+    pnpm install      
     
+    echo "--->Prepare"
+    pnpm run prepare-linux-build deb arm64
    
+    echo "--->Stickers"
     cd sticker-creator
-    pnpm install
-    pnpm run build
+        pnpm install
+        pnpm run build
     cd ..
     
-    echo "--->generate"
-    pnpm run generate
        
     echo "--->Build Signal"
     sleep 5;
-    # This is the equivalent of 'npm run build-linux' with some adjustments
-    pnpm run build:esbuild:prod 
-    pnpm run build:release --arm64 --publish=never --linux deb
+    pnpm run build
   else
-     echo "--->Build Signal"
+      echo "--->Re-Build Signal"
+     
      PATH=$PATH:${BUILD_DIR}/.clickable/home/.local/share/pnpm/
      source ${BUILD_DIR}/.clickable/home/.bashrc
      export NVM_DIR="$HOME/.nvm"
      echo "---> load nvm: $NVM_DIR"
      . "$NVM_DIR/nvm.sh" || true # This loads nvm    
      nvm use 24.15.0
-     # This is the equivalent of 'npm run build-linux' with some adjustments
-     pnpm run build:esbuild:prod 
-     pnpm run build:release --arm64 --publish=never --linux deb
+    
+     pnpm run build
   fi
-  
-  
+
+export CC=$oldcc
+export CXX=$oldccx
+export AR=$oldar
+export LD=$oldld
+
 # ==============================
 # STEP 4: Making logos
 # ==============================  
 echo "[4/10] Making logos..." 
-rsvg-convert --width 2000 --height 2000 ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.svg > ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png
-convert  -background "#3943fd" ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png -resize 1000x  -bordercolor "#3943fd"  -border 300 ${BUILD_DIR}/icon.png
-convert  -background none ${BUILD_DIR}/Signal-Desktop/images/profile-avatar.png -resize 350x  -bordercolor none  -border 875 ${BUILD_DIR}/icon-splash.png
+cp ${ROOT}/icon.png ${BUILD_DIR}/icon.png
+cp ${ROOT}/icon-splash.png ${BUILD_DIR}/icon-splash.png
 
 
 # ===================================
@@ -158,6 +166,7 @@ mkdir -p build
 cd build
 cmake ..
 make
+
 
 cp -r ${ROOT}/utils/placeholder-killer/ ${BUILD_DIR}/
 cd ${BUILD_DIR}/placeholder-killer/
