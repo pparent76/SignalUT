@@ -35,14 +35,6 @@ cd ${BUILD_DIR}/Signal-Desktop
 echo "[2/10] Applying patches"
 
 if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
-   
-   #Patch to build for arm64
-    
-    echo "Add fs-extra+11.3.4.patch patches"
-    cp ${ROOT}/patches/Signal-Desktop/fs-extra+11.3.4.patch patches/
-    
-    echo "Ajust package.json"
-    cat package.json | jq -r --arg fs_extra patches/fs-extra+11.3.4.patch '.pnpm.patchedDependencies."fs-extra@11.3.4"=$fs_extra ' | sponge package.json
 
     #Patch to make the app responsive
     if [ ! -e ".fix-inject-responsive.patch-applyed" ]; then
@@ -110,6 +102,11 @@ export LD=ld
     sleep 5
     pnpm install      
     
+    FS_EXTRA_DIR="$(find node_modules/.pnpm -maxdepth 1 -type d -name 'fs-extra@11.3.4*' | head -n 1)/node_modules/fs-extra"    
+    echo "--->Patching fs-extra in $FS_EXTRA_DIR"   
+    patch -d "$FS_EXTRA_DIR" -p1 < ${ROOT}/patches/Signal-Desktop/fs-extra+11.3.4.patch
+ 
+
     echo "--->Prepare"
     pnpm run prepare-linux-build deb arm64
    
