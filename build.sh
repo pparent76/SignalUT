@@ -18,7 +18,7 @@ INSTALL_DIR="${BUILD_DIR}/install"
 echo "[1/10] Clone Signal-Desktop github"
 
 cd ${BUILD_DIR}
-signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.16.0.tar.gz
+signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.17.0-beta.1.tar.gz
 
 if [ ! -e "Signal-Desktop" ]; then
     mkdir -p "Signal-Desktop"
@@ -52,13 +52,6 @@ if [ ! -e "${BUILD_DIR}/Signal-Desktop/release/linux-arm64-unpacked/" ]; then
         mkdir ${BUILD_DIR}/Signal-Desktop/js/ || true
         cp ${ROOT}/patches/Signal-Desktop/responsive.js ${BUILD_DIR}/Signal-Desktop/js/
         touch .fix-inject-responsive.patch-applyed
-    fi
-    
-    #Patch to fix running on a confined environement
-    if [ ! -e ".fix-oomtracker.patch-applyed" ]; then
-        echo "Apply .fix-oomtracker.patch"
-        patch -p1 < ${ROOT}/patches/Signal-Desktop/fix-oomtracker.patch
-        touch .fix-oomtracker.patch-applyed
     fi
     
     #Patch to have ContentHub working

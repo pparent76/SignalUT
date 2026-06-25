@@ -4,7 +4,7 @@
   "architecture": "@CLICK_ARCH@",
   "title": "Sigma UT",
   "hooks": {
-    "sigmaut": {
+    "signallauncher": {
       "apparmor": "signalut.apparmor",
       "desktop": "signalut.desktop",
       "content-hub": "content-hub.json"
@@ -14,7 +14,7 @@
       "push-helper": "signalut-push-helper.json"
     }
   },
-  "version": "8.16.0-1",
+  "version": "8.17.0-1",
   "maintainer": "Pierre Parent <pro@pierre-parent.fr>",
   "framework": "ubuntu-touch-24.04-1.x"
 }
