@@ -15,7 +15,7 @@ INSTALL_DIR="${BUILD_DIR}/install"
 # ========================
 # STEP 1: CLONE SIGNAL-DESKTOP
 # ========================
-echo "[1/10] Clone Signal-Desktop github"
+echo "[1/10] Download Signal-Desktop from github"
 
 cd ${BUILD_DIR}
 signal_download_url=https://github.com/signalapp/Signal-Desktop/archive/refs/tags/v8.17.0-beta.1.tar.gz
@@ -138,18 +138,11 @@ export CXX=$oldccx
 export AR=$oldar
 export LD=$oldld
 
-# ==============================
-# STEP 4: Making logos
-# ==============================  
-echo "[4/10] Making logos..." 
-cp ${ROOT}/icon.png ${BUILD_DIR}/icon.png
-cp ${ROOT}/icon-splash.png ${BUILD_DIR}/icon-splash.png
-
 
 # ===================================
-# STEP 5: BUILD THE FAKE xdg-open
+# STEP 4: BUILD THE FAKE xdg-open
 # ===================================
-echo "[5/10] Building fake xdg-open & placeholder-killer ..."
+echo "[4/10] Building fake xdg-open & placeholder-killer ..."
 cp -r ${ROOT}/utils/xdg-open/ ${BUILD_DIR}/
 cd ${BUILD_DIR}/xdg-open/
 mkdir -p build
@@ -168,7 +161,7 @@ make
 # ===================================
 # STEP 5: BUILD QML modules
 # ===================================
-echo "[6/10] Building QML modules ..."
+echo "[5/10] Building QML modules ..."
 rm -rvf ${BUILD_DIR}/download-helper
 cp -r ${ROOT}/utils/download-helper/ ${BUILD_DIR}/download-helper
 cd ${BUILD_DIR}/download-helper/qml-download-helper-module/
@@ -197,7 +190,7 @@ cmake --build .
 # =================================================
 # STEP 6: Install dependencies
 # =================================================
-echo "[7/10] Install dependencies..."
+echo "[6/10] Install dependencies..."
 
 cd ${BUILD_DIR}
 DEPENDENCIES="libhybris-utils xdotool libmaliit-glib2 libxdo3 x11-utils"
@@ -216,9 +209,9 @@ mkdir "coreutils_9.4-3ubuntu6_arm64.deb_extract_chsdjksd"
 dpkg-deb -x "coreutils_9.4-3ubuntu6_arm64.deb" "coreutils_9.4-3ubuntu6_arm64.deb_extract_chsdjksd"
 
 # =================================================
-# STEP 8: Downloading maliit-inputcontext-gtk3
+# STEP 7: Downloading maliit-inputcontext-gtk3
 # =================================================
-echo "[8/11] Building maliit-inputcontext-gtk3..."
+echo "[7/10] Building maliit-inputcontext-gtk3..."
 
 cd ${BUILD_DIR}
 
@@ -255,9 +248,9 @@ EDITOR=true dpkg-source --commit . fix-keyboard
 DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
 
 # =================================================
-# STEP 9: Build libnotify
+# STEP 8: Build libnotify
 # =================================================
-echo "[9/11] Building libnotify..."
+echo "[8/10] Building libnotify..."
 
 rm -rvf ${BUILD_DIR}/libnotify || true
 mkdir -p ${BUILD_DIR}/libnotify
@@ -288,9 +281,9 @@ DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -a arm64
 
 
 # ==============================
-# STEP 10: Copying files
+# STEP 9: Copying files
 # ==============================  
-echo "[10/11] Copying files..." 
+echo "[9/10] Copying files..." 
 
 
 echo "Copying dependencies..."
@@ -349,6 +342,10 @@ cp ${BUILD_DIR}/placeholder-killer/build/placeholder-killer $INSTALL_DIR/bin/
 mkdir $INSTALL_DIR/utils/download-helper/
 cp -r ${BUILD_DIR}/download-helper/qml $INSTALL_DIR/utils/download-helper/
 
+echo "Copying logos..." 
+cp ${ROOT}/icon.png ${BUILD_DIR}/icon.png
+cp ${ROOT}/icon-splash.png ${BUILD_DIR}/icon-splash.png
+
 mkdir -p $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/build/libDownloadHelperPlugin.so $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
 cp ${BUILD_DIR}/download-helper/qml-download-helper-module/qmldir $INSTALL_DIR/utils/download-helper/Pparent/DownloadHelper/
@@ -380,9 +377,9 @@ chmod +x $INSTALL_DIR/opt/Signal/chrome_crashpad_handler
 
 
 # ========================
-# STEP 11: BUILD THE CLICK PACKAGE
+# STEP 10: BUILD THE CLICK PACKAGE
 # ========================
-echo "[11/11] Building click package..."
+echo "[10/10] Building click package..."
 # click build "$INSTALL_DIR"
 
 echo "✅ Preparation done, building the .click package."
