@@ -42,7 +42,7 @@ MainView {
            {
                pushed=true;
                button1.visible=false;
-               overlayText.text="Signal is starting..."
+               overlayText.text="Sigma UT is starting..."
                config.microState=4
            }
         }
@@ -60,7 +60,7 @@ MainView {
     Page {
         id: permissionPage
         anchors.fill: parent
-        title: "Signal UT"
+        title: "Sigma UT"
                 
 
         Rectangle {
@@ -86,7 +86,7 @@ MainView {
                 QCC.TextField {
                     id: titleField
 
-                    text: "Welcome to Signal UT!"
+                    text: "Welcome to Sigma UT!"
                     font.bold: true
                     font.pixelSize: units.gu(3)
                     color: "white"
@@ -296,7 +296,7 @@ MainView {
                     Text {
                         id: overlayText
                         visible: false
-                        text: "Signal is starting..."
+                        text: "Sigma is starting..."
                         color: "white"
                         font.pixelSize: units.gu(2.5)
                         horizontalAlignment: Text.AlignHCenter
